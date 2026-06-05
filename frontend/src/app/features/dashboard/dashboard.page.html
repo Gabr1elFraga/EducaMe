@@ -1,4 +1,22 @@
-<ng-container *ngIf="summary$ | async as summary">
+<ng-container *ngIf="loading">
+  <section class="card">
+    <p class="eyebrow">Carregando</p>
+    <h3>Buscando dados da API</h3>
+    <p class="hero-text">
+      O frontend esta consultando o backend Spring com o token do Supabase.
+    </p>
+  </section>
+</ng-container>
+
+<ng-container *ngIf="errorMessage">
+  <section class="card">
+    <p class="eyebrow">Erro</p>
+    <h3>Falha ao carregar o dashboard</h3>
+    <p class="hero-text">{{ errorMessage }}</p>
+  </section>
+</ng-container>
+
+<ng-container *ngIf="!loading && !errorMessage && summary">
   <section class="hero" id="dashboard">
     <div class="hero-copy">
       <p class="eyebrow">Painel operacional</p>

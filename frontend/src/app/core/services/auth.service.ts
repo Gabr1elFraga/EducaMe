@@ -55,7 +55,7 @@ export class AuthService {
   }
 
   async signIn(email: string, password: string): Promise<void> {
-    const { error } = await this.client.auth.signInWithPassword({
+    const { data, error } = await this.client.auth.signInWithPassword({
       email,
       password,
     });
@@ -63,6 +63,8 @@ export class AuthService {
     if (error) {
       throw new Error(error.message);
     }
+
+    this.sessionSubject.next(data.session);
   }
 
   async signOut(): Promise<void> {
