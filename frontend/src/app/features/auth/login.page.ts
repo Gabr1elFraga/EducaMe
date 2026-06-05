@@ -66,7 +66,6 @@ export class LoginPageComponent implements OnInit {
         this.emailControl.value.trim(),
         this.passwordControl.value,
       );
-      await this.authService.loadSession();
       await this.router.navigateByUrl(this.redirectUrl);
     } catch (error) {
       this.errorMessage = this.normalizeError(error);
