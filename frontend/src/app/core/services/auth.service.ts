@@ -104,10 +104,14 @@ export class AuthService {
     const { data, error } = await this.client.auth.getSession();
 
     if (error) {
-      this.sessionSubject.next(null);
+      if (this.sessionSubject.value === undefined) {
+        this.sessionSubject.next(null);
+      }
       return;
     }
 
-    this.sessionSubject.next(data.session);
+    if (data.session || this.sessionSubject.value === undefined || this.sessionSubject.value === null) {
+      this.sessionSubject.next(data.session);
+    }
   }
 }
