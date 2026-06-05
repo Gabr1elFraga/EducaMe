@@ -49,9 +49,13 @@ export class LoginPageComponent implements OnInit {
     }
   }
 
-  async submit(): Promise<void> {
+  async submit(event?: Event): Promise<void> {
+    event?.preventDefault();
+    event?.stopPropagation();
+
     this.errorMessage = '';
     this.successMessage = '';
+    this.configError = this.configError;
 
     if (this.emailControl.invalid || this.passwordControl.invalid) {
       this.emailControl.markAsTouched();
@@ -60,21 +64,32 @@ export class LoginPageComponent implements OnInit {
     }
 
     this.loading = true;
+    this.successMessage = 'Autenticando...';
 
     try {
-      await this.authService.signIn(
+      const session = await this.authService.signIn(
         this.emailControl.value.trim(),
         this.passwordControl.value,
       );
+      if (!session) {
+        throw new Error('Supabase nao retornou uma sessao apos o login.');
+      }
+
+      this.successMessage = 'Sessao criada. Redirecionando...';
       await this.router.navigateByUrl(this.redirectUrl);
     } catch (error) {
+      console.error('Login failed', error);
       this.errorMessage = this.normalizeError(error);
+      this.successMessage = '';
     } finally {
       this.loading = false;
     }
   }
 
-  async signUp(): Promise<void> {
+  async signUp(event?: Event): Promise<void> {
+    event?.preventDefault();
+    event?.stopPropagation();
+
     this.errorMessage = '';
     this.successMessage = '';
 
@@ -85,6 +100,7 @@ export class LoginPageComponent implements OnInit {
     }
 
     this.signingUp = true;
+    this.successMessage = 'Criando conta...';
 
     try {
       const result = await this.authService.signUp(
@@ -101,7 +117,9 @@ export class LoginPageComponent implements OnInit {
       this.successMessage =
         'Conta criada. Se o email confirmation estiver ativo, confirme o email para entrar.';
     } catch (error) {
+      console.error('Sign up failed', error);
       this.errorMessage = this.normalizeError(error);
+      this.successMessage = '';
     } finally {
       this.signingUp = false;
     }

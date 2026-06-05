@@ -15,7 +15,7 @@
     </ul>
   </div>
 
-  <form class="login-card" novalidate (ngSubmit)="submit()">
+  <form class="login-card" novalidate (submit)="submit($event)">
     <div class="brand">
       <div class="brand-mark">E</div>
       <div>
@@ -69,7 +69,7 @@
       {{ loading ? 'Entrando...' : 'Entrar' }}
     </button>
 
-    <button type="button" class="secondary" [disabled]="loading || signingUp" (click)="signUp()">
+    <button type="button" class="secondary" [disabled]="loading || signingUp" (click)="signUp($event)">
       {{ signingUp ? 'Criando...' : 'Criar conta' }}
     </button>
 

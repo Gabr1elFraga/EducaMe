@@ -61,7 +61,7 @@ export class AuthService {
     return !SUPABASE_CONFIG.anonKey.includes('REPLACE_WITH_SUPABASE_ANON_KEY');
   }
 
-  async signIn(email: string, password: string): Promise<void> {
+  async signIn(email: string, password: string): Promise<Session> {
     const { data, error } = await this.client.auth.signInWithPassword({
       email,
       password,
@@ -71,7 +71,12 @@ export class AuthService {
       throw new Error(error.message);
     }
 
+    if (!data.session) {
+      throw new Error('Supabase nao retornou uma sessao apos o login.');
+    }
+
     this.sessionSubject.next(data.session);
+    return data.session;
   }
 
   async signUp(email: string, password: string): Promise<{
