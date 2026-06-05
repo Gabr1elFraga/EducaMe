@@ -1,0 +1,72 @@
+<section class="login-shell">
+  <div class="login-copy">
+    <p class="eyebrow">Acesso autenticado</p>
+    <h1>Entre com sua conta do Supabase</h1>
+    <p>
+      O login do frontend usa email e senha do Supabase Auth. Nao existe senha
+      padrao do projeto. Se a conta ainda nao existir, crie o usuario no painel
+      do Supabase Auth ou habilite o fluxo de cadastro.
+    </p>
+
+    <ul class="feature-list">
+      <li>Session salva no browser.</li>
+      <li>Token enviado para a API Spring.</li>
+      <li>Rota protegida pelo guard do Angular.</li>
+    </ul>
+  </div>
+
+  <form class="login-card" (ngSubmit)="submit()">
+    <div class="brand">
+      <div class="brand-mark">E</div>
+      <div>
+        <div class="brand-name">EducaMe</div>
+        <div class="brand-subtitle">Plataforma de ensino</div>
+      </div>
+    </div>
+
+    <h2>Login</h2>
+    <p class="subtitle">Use a conta cadastrada no Supabase.</p>
+
+    <div class="notice error" *ngIf="configError">
+      {{ configError }}
+    </div>
+
+    <div class="notice error" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+
+    <label>
+      <span>Email</span>
+      <input
+        type="email"
+        [formControl]="emailControl"
+        placeholder="voce@educame.com"
+        autocomplete="email"
+      />
+      <small *ngIf="emailControl.touched && emailControl.invalid">
+        Informe um email valido.
+      </small>
+    </label>
+
+    <label>
+      <span>Senha</span>
+      <input
+        type="password"
+        [formControl]="passwordControl"
+        placeholder="••••••••"
+        autocomplete="current-password"
+      />
+      <small *ngIf="passwordControl.touched && passwordControl.invalid">
+        A senha precisa ter pelo menos 6 caracteres.
+      </small>
+    </label>
+
+    <button type="submit" [disabled]="loading">
+      {{ loading ? 'Entrando...' : 'Entrar' }}
+    </button>
+
+    <p class="hint">
+      Depois do login, voce vai para o dashboard protegido.
+    </p>
+  </form>
+</section>
