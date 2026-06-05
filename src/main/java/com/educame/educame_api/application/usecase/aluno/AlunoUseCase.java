@@ -2,10 +2,11 @@ package com.educame.educame_api.application.usecase.aluno;
 
 import com.educame.educame_api.application.dto.aluno.AlunoRequest;
 import com.educame.educame_api.application.dto.aluno.AlunoResponse;
-import com.educame.educame_api.infrastructure.persistence.jpa.entity.AlunoEntity;
-import com.educame.educame_api.infrastructure.persistence.jpa.entity.EnderecoEntity;
-import com.educame.educame_api.infrastructure.persistence.jpa.repository.AlunoJpaRepository;
-import com.educame.educame_api.infrastructure.persistence.jpa.repository.EnderecoJpaRepository;
+import com.educame.educame_api.application.mapper.DomainEntityMapper;
+import com.educame.educame_api.domain.aluno.Aluno;
+import com.educame.educame_api.domain.contract.AlunoRepository;
+import com.educame.educame_api.domain.contract.EnderecoRepository;
+import com.educame.educame_api.domain.endereco.Endereco;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -15,11 +16,10 @@ import java.util.UUID;
 
 @Service
 public class AlunoUseCase {
+	private final AlunoRepository alunoRepository;
+	private final EnderecoRepository enderecoRepository;
 
-	private final AlunoJpaRepository alunoRepository;
-	private final EnderecoJpaRepository enderecoRepository;
-
-	public AlunoUseCase(AlunoJpaRepository alunoRepository, EnderecoJpaRepository enderecoRepository) {
+	public AlunoUseCase(AlunoRepository alunoRepository, EnderecoRepository enderecoRepository) {
 		this.alunoRepository = alunoRepository;
 		this.enderecoRepository = enderecoRepository;
 	}
@@ -27,40 +27,40 @@ public class AlunoUseCase {
 	public List<AlunoResponse> list() {
 		return alunoRepository.findAll()
 			.stream()
-			.map(this::toResponse)
+			.map(DomainEntityMapper::toResponse)
 			.toList();
 	}
 
 	public AlunoResponse findById(UUID id) {
 		return alunoRepository.findById(id)
-			.map(this::toResponse)
+			.map(DomainEntityMapper::toResponse)
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Aluno não encontrado."));
 	}
 
 	public AlunoResponse create(AlunoRequest request) {
-		var entity = new AlunoEntity();
-		entity.setAuthUserId(request.authUserId());
-		entity.setNome(request.nome());
-		entity.setSobrenome(request.sobrenome());
-		entity.setDataNascimento(request.dataNascimento());
-		entity.setGenero(request.genero());
-		entity.setEndereco(resolveEndereco(request.enderecoId()));
+		var aluno = new Aluno();
+		aluno.setAuthUserId(request.authUserId());
+		aluno.setNome(request.nome());
+		aluno.setSobrenome(request.sobrenome());
+		aluno.setDataNascimento(request.dataNascimento());
+		aluno.setGenero(request.genero());
+		aluno.setEndereco(resolveEndereco(request.enderecoId()));
 
-		return toResponse(alunoRepository.save(entity));
+		return DomainEntityMapper.toResponse(alunoRepository.save(aluno));
 	}
 
 	public AlunoResponse update(UUID id, AlunoRequest request) {
-		var entity = alunoRepository.findById(id)
+		var aluno = alunoRepository.findById(id)
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Aluno não encontrado."));
 
-		entity.setAuthUserId(request.authUserId());
-		entity.setNome(request.nome());
-		entity.setSobrenome(request.sobrenome());
-		entity.setDataNascimento(request.dataNascimento());
-		entity.setGenero(request.genero());
-		entity.setEndereco(resolveEndereco(request.enderecoId()));
+		aluno.setAuthUserId(request.authUserId());
+		aluno.setNome(request.nome());
+		aluno.setSobrenome(request.sobrenome());
+		aluno.setDataNascimento(request.dataNascimento());
+		aluno.setGenero(request.genero());
+		aluno.setEndereco(resolveEndereco(request.enderecoId()));
 
-		return toResponse(alunoRepository.save(entity));
+		return DomainEntityMapper.toResponse(alunoRepository.save(aluno));
 	}
 
 	public void delete(UUID id) {
@@ -70,34 +70,11 @@ public class AlunoUseCase {
 		alunoRepository.deleteById(id);
 	}
 
-	private EnderecoEntity resolveEndereco(UUID enderecoId) {
+	private Endereco resolveEndereco(UUID enderecoId) {
 		if (enderecoId == null) {
 			return null;
 		}
 		return enderecoRepository.findById(enderecoId)
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Endereço não encontrado."));
-	}
-
-	private AlunoResponse toResponse(AlunoEntity entity) {
-		var endereco = entity.getEndereco();
-		return new AlunoResponse(
-			entity.getId(),
-			entity.getAuthUserId(),
-			entity.getNome(),
-			entity.getSobrenome(),
-			entity.getDataNascimento(),
-			entity.getGenero(),
-			endereco == null ? null : new AlunoResponse.EnderecoResponse(
-				endereco.getId(),
-				endereco.getRua(),
-				endereco.getNumero(),
-				endereco.getComplemento(),
-				endereco.getBairro(),
-				endereco.getCidade(),
-				endereco.getEstado(),
-				endereco.getCep(),
-				endereco.getPais()
-			)
-		);
 	}
 }
