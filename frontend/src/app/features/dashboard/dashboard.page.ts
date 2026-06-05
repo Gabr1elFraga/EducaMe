@@ -11,7 +11,9 @@ import { DashboardService } from './services/dashboard.service';
   styleUrl: './dashboard.page.css',
 })
 export class DashboardPageComponent {
-  readonly summary$ = this.dashboardService.getSummary();
+  readonly summary$;
 
-  constructor(private readonly dashboardService: DashboardService) {}
+  constructor(private readonly dashboardService: DashboardService) {
+    this.summary$ = this.dashboardService.getSummary();
+  }
 }

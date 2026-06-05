@@ -1,5 +1,6 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { catchError, Observable, of } from 'rxjs';
 import { DASHBOARD_MOCK } from '../data/dashboard.mock';
 import { DashboardSummary } from '../models/dashboard-summary.model';
 
@@ -7,7 +8,11 @@ import { DashboardSummary } from '../models/dashboard-summary.model';
   providedIn: 'root',
 })
 export class DashboardService {
+  constructor(private readonly http: HttpClient) {}
+
   getSummary(): Observable<DashboardSummary> {
-    return of(DASHBOARD_MOCK);
+    return this.http.get<DashboardSummary>('/dashboard/summary').pipe(
+      catchError(() => of(DASHBOARD_MOCK)),
+    );
   }
 }

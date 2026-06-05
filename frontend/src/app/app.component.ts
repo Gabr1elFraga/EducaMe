@@ -11,7 +11,9 @@ import { NavigationService } from './core/services/navigation.service';
   styleUrl: './app.component.css',
 })
 export class AppComponent {
-  readonly navItems = this.navigationService.getSections();
+  readonly navItems: ReturnType<NavigationService['getSections']>;
 
-  constructor(private readonly navigationService: NavigationService) {}
+  constructor(private readonly navigationService: NavigationService) {
+    this.navItems = this.navigationService.getSections();
+  }
 }
