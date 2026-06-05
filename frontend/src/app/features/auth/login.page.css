@@ -142,6 +142,12 @@ small {
   background: rgba(255, 122, 122, 0.08);
 }
 
+.notice.success {
+  color: #dff7ea;
+  border-color: rgba(100, 216, 154, 0.22);
+  background: rgba(100, 216, 154, 0.08);
+}
+
 button {
   margin-top: 4px;
   padding: 14px 18px;
@@ -152,6 +158,12 @@ button {
   font: 700 1rem/1 "Trebuchet MS", "Segoe UI", sans-serif;
   cursor: pointer;
   transition: transform 180ms ease, opacity 180ms ease;
+}
+
+button.secondary {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--line);
 }
 
 button:hover:not(:disabled) {

@@ -35,6 +35,10 @@
       {{ errorMessage }}
     </div>
 
+    <div class="notice success" *ngIf="successMessage">
+      {{ successMessage }}
+    </div>
+
     <label>
       <span>Email</span>
       <input
@@ -61,8 +65,12 @@
       </small>
     </label>
 
-    <button type="submit" [disabled]="loading">
+    <button type="submit" [disabled]="loading || signingUp">
       {{ loading ? 'Entrando...' : 'Entrar' }}
+    </button>
+
+    <button type="button" class="secondary" [disabled]="loading || signingUp" (click)="signUp()">
+      {{ signingUp ? 'Criando...' : 'Criar conta' }}
     </button>
 
     <p class="hint">

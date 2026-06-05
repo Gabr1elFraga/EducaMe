@@ -27,7 +27,9 @@ export class LoginPageComponent implements OnInit {
   });
 
   loading = false;
+  signingUp = false;
   errorMessage = '';
+  successMessage = '';
   configError = '';
 
   private redirectUrl = '/';
@@ -49,6 +51,7 @@ export class LoginPageComponent implements OnInit {
 
   async submit(): Promise<void> {
     this.errorMessage = '';
+    this.successMessage = '';
 
     if (this.emailControl.invalid || this.passwordControl.invalid) {
       this.emailControl.markAsTouched();
@@ -69,6 +72,39 @@ export class LoginPageComponent implements OnInit {
       this.errorMessage = this.normalizeError(error);
     } finally {
       this.loading = false;
+    }
+  }
+
+  async signUp(): Promise<void> {
+    this.errorMessage = '';
+    this.successMessage = '';
+
+    if (this.emailControl.invalid || this.passwordControl.invalid) {
+      this.emailControl.markAsTouched();
+      this.passwordControl.markAsTouched();
+      return;
+    }
+
+    this.signingUp = true;
+
+    try {
+      const result = await this.authService.signUp(
+        this.emailControl.value.trim(),
+        this.passwordControl.value,
+      );
+
+      if (result.session) {
+        this.successMessage = 'Conta criada e autenticada com sucesso.';
+        await this.router.navigateByUrl(this.redirectUrl);
+        return;
+      }
+
+      this.successMessage =
+        'Conta criada. Se o email confirmation estiver ativo, confirme o email para entrar.';
+    } catch (error) {
+      this.errorMessage = this.normalizeError(error);
+    } finally {
+      this.signingUp = false;
     }
   }
 

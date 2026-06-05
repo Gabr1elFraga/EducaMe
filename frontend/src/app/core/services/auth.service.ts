@@ -67,6 +67,29 @@ export class AuthService {
     this.sessionSubject.next(data.session);
   }
 
+  async signUp(email: string, password: string): Promise<{
+    session: Session | null;
+    user: User | null;
+  }> {
+    const { data, error } = await this.client.auth.signUp({
+      email,
+      password,
+    });
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    if (data.session) {
+      this.sessionSubject.next(data.session);
+    }
+
+    return {
+      session: data.session,
+      user: data.user,
+    };
+  }
+
   async signOut(): Promise<void> {
     const { error } = await this.client.auth.signOut();
 
