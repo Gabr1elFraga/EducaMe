@@ -1,0 +1,8 @@
+project_id = "educame-api"
+
+[db]
+port = 54322
+shadow_port = 54323
+
+[db.migrations]
+schema_paths = ["./migrations/*.sql"]

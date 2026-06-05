@@ -59,6 +59,10 @@ Entidades de negócio previstas:
 
 O backend usa Supabase de forma segura, sem hardcode de chaves no repositório.
 
+### Schema scaffold
+
+O schema inicial do banco está versionado em `supabase/migrations` e pode ser aplicado como base do projeto.
+
 ### Fluxo recomendado
 
 - O banco Postgres do Supabase é acessado pelo backend com a string de conexão do projeto.
