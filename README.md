@@ -120,6 +120,31 @@ A primeira tela é um dashboard operacional com:
 - movimentação recente de alunos
 - disponibilidade de professores
 
+### Login
+
+O frontend agora possui login real via Supabase Auth.
+
+Para funcionar, preencha o cliente do Supabase em:
+
+- `frontend/src/app/core/config/supabase.config.ts`
+
+O projeto usa:
+
+- `email`
+- `password`
+
+Fluxo:
+
+1. Abra `http://localhost:4200/login`
+2. Entre com uma conta criada no Supabase Auth
+3. Após autenticar, o Angular redireciona para o dashboard
+
+Observações:
+
+- nao existe senha padrao do projeto
+- o login usa a `anon key` do Supabase no frontend
+- a `service_role key` nao deve ser usada no browser
+
 ### Como executar o frontend
 
 O projeto usa a versão do Node definida em [`.nvmrc`](/Users/gabrielfraga/Documents/Faculdade/educame-api/.nvmrc).
@@ -146,6 +171,14 @@ http://localhost:4200/
 ### Integração com a API
 
 O frontend foi preparado para consumir a API Spring no backend do mesmo repositório. O serviço base e o interceptor ficam em `src/app/core`.
+
+### Endpoint disponível hoje
+
+No backend, o endpoint funcional exposto para a aplicação é:
+
+- `GET /api/dashboard/summary`
+
+O login nao passa pelo backend Spring. Ele ocorre direto com o Supabase Auth no frontend, e o token resultante é enviado como `Authorization: Bearer <token>` para a API.
 
 ## Observações de arquitetura
 
