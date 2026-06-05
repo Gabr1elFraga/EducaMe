@@ -3,12 +3,16 @@ target/
 .env
 .env.*
 !.env.example
-.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
 .DS_Store
 *.log
 *.tmp
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/.cache/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
 
 ### STS ###
 .apt_generated
