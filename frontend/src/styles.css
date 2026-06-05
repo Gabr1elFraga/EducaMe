@@ -1,0 +1,46 @@
+:root {
+  color-scheme: dark;
+  --bg: #07111f;
+  --bg-soft: rgba(255, 255, 255, 0.05);
+  --card: rgba(8, 14, 24, 0.82);
+  --line: rgba(255, 255, 255, 0.09);
+  --text: #edf2ff;
+  --muted: #97a4be;
+  --accent: #f3bf68;
+  --accent-2: #6ad4ff;
+  --accent-3: #8b93ff;
+  --success: #64d89a;
+  --warning: #f3c969;
+  --shadow: 0 28px 70px rgba(0, 0, 0, 0.35);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 18% 14%, rgba(106, 212, 255, 0.16), transparent 24%),
+    radial-gradient(circle at 82% 8%, rgba(139, 147, 255, 0.16), transparent 22%),
+    linear-gradient(160deg, #050913 0%, #08111f 44%, #050913 100%);
+  font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}

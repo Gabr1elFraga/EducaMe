@@ -1,0 +1,51 @@
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">E</div>
+      <div>
+        <div class="brand-name">EducaMe</div>
+        <div class="brand-subtitle">Plataforma de ensino</div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <a
+        class="nav-item"
+        *ngFor="let item of navItems"
+        [href]="'#' + item.fragment"
+      >
+        {{ item.label }}
+      </a>
+    </nav>
+
+    <section class="sidebar-card">
+      <p class="eyebrow">Arquitetura</p>
+      <h2>Angular modularizado</h2>
+      <p>
+        A estrutura foi separada em core, shared e features para sustentar
+        evolução sem espalhar lógica pelos componentes.
+      </p>
+      <div class="pill-row">
+        <span class="pill success">Standalone</span>
+        <span class="pill neutral">Responsive</span>
+      </div>
+    </section>
+  </aside>
+
+  <div class="workspace">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Frontend Angular</p>
+        <h1>Painel inicial da EducaMe</h1>
+      </div>
+      <div class="topbar-action">
+        <span class="status-dot"></span>
+        <span>Preparado para a API Spring</span>
+      </div>
+    </header>
+
+    <main class="content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

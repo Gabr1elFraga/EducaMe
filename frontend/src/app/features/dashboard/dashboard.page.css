@@ -1,0 +1,310 @@
+.hero,
+.content-grid {
+  display: grid;
+  gap: 22px;
+}
+
+.hero {
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  margin-bottom: 22px;
+}
+
+.hero-copy,
+.hero-panel,
+.card {
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background: var(--card);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(16px);
+}
+
+.hero-copy,
+.hero-panel {
+  padding: 24px;
+}
+
+.hero-copy h2 {
+  font-size: clamp(2.3rem, 3.8vw, 4.4rem);
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+  margin: 10px 0 18px;
+  max-width: 12ch;
+}
+
+.hero-text {
+  max-width: 60ch;
+  color: var(--muted);
+  font-size: 1.04rem;
+  line-height: 1.7;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 26px;
+}
+
+.button {
+  padding: 14px 20px;
+  border-radius: 999px;
+  font: 700 0.95rem/1 "Trebuchet MS", "Segoe UI", sans-serif;
+  border: 1px solid var(--line);
+  transition: transform 180ms ease, background 180ms ease;
+}
+
+.button:hover {
+  transform: translateY(-2px);
+}
+
+.button.primary {
+  color: #10131c;
+  background: linear-gradient(135deg, var(--accent) 0%, #ffd88c 100%);
+}
+
+.button.secondary {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.panel-top,
+.card-head,
+.stack-item,
+.timeline-item,
+.summary-list div,
+.teacher-card,
+.notice {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.panel-top,
+.card-head {
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.hero-panel h3,
+.card h3 {
+  margin: 4px 0 0;
+  font: 700 1.7rem/1.1 "Trebuchet MS", "Segoe UI", sans-serif;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.card {
+  padding: 22px;
+}
+
+.timeline {
+  display: grid;
+  gap: 14px;
+}
+
+.timeline-item,
+.stack-item {
+  padding: 18px;
+  border-radius: 20px;
+  background: var(--bg-soft);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  align-items: center;
+}
+
+.timeline-copy h4,
+.stack-item strong,
+.teacher-card strong {
+  margin: 0 0 6px;
+  font-size: 1.05rem;
+}
+
+.timeline-copy p,
+.stack-item p,
+.teacher-card span,
+.teacher-card p,
+.notice span,
+.summary-list span {
+  margin: 0;
+  color: var(--muted);
+}
+
+.time {
+  min-width: 62px;
+  font: 700 0.95rem/1 "Trebuchet MS", "Segoe UI", sans-serif;
+  color: var(--accent-2);
+}
+
+.label,
+.mini-badge,
+.status-chip,
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 11px;
+  border-radius: 999px;
+  font: 700 0.72rem/1 "Trebuchet MS", "Segoe UI", sans-serif;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.label {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.label[data-status='Confirmada'],
+.label[data-status='Regularizado'] {
+  color: #081610;
+  background: rgba(100, 216, 154, 0.95);
+}
+
+.label[data-status='Aguardando'],
+.label[data-status='Novo'],
+.label[data-status='Reagendado'] {
+  color: #231b0a;
+  background: rgba(243, 201, 105, 0.95);
+}
+
+.mini-badge,
+.status-chip {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.chart {
+  height: 220px;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 12px;
+  align-items: end;
+  padding: 10px 0 4px;
+}
+
+.bar {
+  position: relative;
+  align-self: end;
+  height: var(--h);
+  min-height: 36px;
+  border-radius: 22px 22px 12px 12px;
+  background: linear-gradient(180deg, rgba(106, 212, 255, 0.92), rgba(139, 147, 255, 0.48));
+  box-shadow: 0 20px 30px rgba(106, 212, 255, 0.12);
+}
+
+.bar.active {
+  background: linear-gradient(180deg, rgba(243, 191, 104, 0.98), rgba(255, 214, 142, 0.65));
+}
+
+.bar span {
+  position: absolute;
+  left: 50%;
+  bottom: -28px;
+  transform: translateX(-50%);
+  font: 700 0.8rem/1 "Trebuchet MS", "Segoe UI", sans-serif;
+  color: var(--muted);
+}
+
+.summary-list,
+.stack-list,
+.teacher-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.summary-list {
+  margin-top: 34px;
+}
+
+.summary-list div {
+  padding: 12px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  align-items: center;
+}
+
+.bottom-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  margin-top: 22px;
+}
+
+.teacher-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.teacher-card {
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 18px;
+  border-radius: 22px;
+  background: var(--bg-soft);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  min-height: 150px;
+}
+
+.teacher-card p {
+  margin-top: auto;
+}
+
+.notice {
+  margin-top: 16px;
+  padding: 18px;
+  border-radius: 22px;
+  align-items: center;
+  background: linear-gradient(135deg, rgba(243, 191, 104, 0.12), rgba(106, 212, 255, 0.08));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.eyebrow {
+  font: 700 0.74rem/1 "Trebuchet MS", "Segoe UI", sans-serif;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+@media (max-width: 1180px) {
+  .hero,
+  .content-grid,
+  .bottom-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .teacher-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .hero-copy,
+  .hero-panel,
+  .card {
+    padding: 18px;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .timeline-item,
+  .stack-item,
+  .panel-top,
+  .card-head,
+  .summary-list div,
+  .notice {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .hero-actions {
+    width: 100%;
+  }
+
+  .button {
+    width: 100%;
+    text-align: center;
+  }
+}

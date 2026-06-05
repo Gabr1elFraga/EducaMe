@@ -1,0 +1,129 @@
+<ng-container *ngIf="summary$ | async as summary">
+  <section class="hero" id="dashboard">
+    <div class="hero-copy">
+      <p class="eyebrow">Painel operacional</p>
+      <h2>Controle aulas, alunos e agenda em um só lugar.</h2>
+      <p class="hero-text">
+        Acompanhe o fluxo diário da plataforma, identifique pendências e
+        organize a operação sem dispersar a regra de negócio.
+      </p>
+      <div class="hero-actions">
+        <a class="button primary" href="#aulas">Ver próximas aulas</a>
+        <a class="button secondary" href="#financeiro">Abrir financeiro</a>
+      </div>
+    </div>
+
+    <div class="hero-panel">
+      <div class="panel-top">
+        <div>
+          <p class="eyebrow">Resumo de hoje</p>
+          <h3>{{ summary.dateLabel }}</h3>
+        </div>
+        <span class="status-chip">Ao vivo</span>
+      </div>
+
+      <div class="stats-grid">
+        <app-stat-card
+          *ngFor="let metric of summary.metrics"
+          [label]="metric.label"
+          [value]="metric.value"
+          [description]="metric.description"
+          [tone]="metric.tone"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="content-grid">
+    <section class="card schedule" id="aulas">
+      <div class="card-head">
+        <div>
+          <p class="eyebrow">Próximas aulas</p>
+          <h3>Agenda do dia</h3>
+        </div>
+        <span class="mini-badge">Atualizado agora</span>
+      </div>
+
+      <div class="timeline">
+        <article class="timeline-item" *ngFor="let lesson of summary.lessons">
+          <span class="time">{{ lesson.time }}</span>
+          <div class="timeline-copy">
+            <h4>{{ lesson.title }}</h4>
+            <p>{{ lesson.details }}</p>
+          </div>
+          <span class="label" [attr.data-status]="lesson.status">{{ lesson.status }}</span>
+        </article>
+      </div>
+    </section>
+
+    <section class="card finance" id="financeiro">
+      <div class="card-head">
+        <div>
+          <p class="eyebrow">Financeiro</p>
+          <h3>Receita semanal</h3>
+        </div>
+        <span class="mini-badge">{{ summary.revenue }}</span>
+      </div>
+
+      <div class="chart" aria-label="Receita semanal ilustrativa">
+        <div class="bar" style="--h: 35%"><span>Seg</span></div>
+        <div class="bar" style="--h: 56%"><span>Ter</span></div>
+        <div class="bar" style="--h: 48%"><span>Qua</span></div>
+        <div class="bar active" style="--h: 75%"><span>Qui</span></div>
+        <div class="bar" style="--h: 62%"><span>Sex</span></div>
+        <div class="bar" style="--h: 81%"><span>Sáb</span></div>
+        <div class="bar" style="--h: 44%"><span>Dom</span></div>
+      </div>
+
+      <div class="summary-list">
+        <div><span>Pagamentos aprovados</span><strong>{{ summary.approvals }}</strong></div>
+        <div><span>Pagamentos atrasados</span><strong>{{ summary.overduePayments }}</strong></div>
+        <div><span>Ticket médio</span><strong>{{ summary.averageTicket }}</strong></div>
+      </div>
+    </section>
+  </section>
+
+  <section class="content-grid bottom-grid">
+    <section class="card" id="alunos">
+      <div class="card-head">
+        <div>
+          <p class="eyebrow">Alunos</p>
+          <h3>Movimento recente</h3>
+        </div>
+      </div>
+
+      <div class="stack-list">
+        <article class="stack-item" *ngFor="let student of summary.studentUpdates">
+          <div>
+            <strong>{{ student.name }}</strong>
+            <p>{{ student.details }}</p>
+          </div>
+          <span class="label" [attr.data-status]="student.status">{{ student.status }}</span>
+        </article>
+      </div>
+    </section>
+
+    <section class="card" id="professores">
+      <div class="card-head">
+        <div>
+          <p class="eyebrow">Professores</p>
+          <h3>Disponibilidade crítica</h3>
+        </div>
+      </div>
+
+      <div class="teacher-grid">
+        <article class="teacher-card" *ngFor="let teacher of summary.teacherAvailability">
+          <strong>{{ teacher.name }}</strong>
+          <span>{{ teacher.subject }}</span>
+          <p>{{ teacher.freeSlots }} slots livres</p>
+        </article>
+      </div>
+
+      <div class="notice" id="avaliacoes">
+        <p class="eyebrow">Avaliações</p>
+        <strong>{{ summary.rating }}</strong>
+        <span>Baseado em {{ summary.reviewCount }} avaliações registradas</span>
+      </div>
+    </section>
+  </section>
+</ng-container>

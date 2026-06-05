@@ -100,29 +100,41 @@ SUPABASE_DB_PASSWORD=...
 
 ## Frontend
 
-O projeto já expõe um dashboard inicial em `src/main/resources/static`, servido pela própria aplicação Spring na raiz `/`.
+O frontend Angular fica em `frontend/` e segue a estrutura definida no `Agents.md`:
 
-### O que esse dashboard cobre
+- `src/app/core`
+- `src/app/shared`
+- `src/app/features`
 
-- visão geral das aulas do dia
-- métricas operacionais
-- acompanhamento financeiro
+### Dashboard inicial
+
+A primeira tela é um dashboard operacional com:
+
+- visão geral do dia
+- próximas aulas
+- métricas financeiras
 - movimentação recente de alunos
 - disponibilidade de professores
 
-### Como acessar
+### Como executar o frontend
 
-Depois de subir a aplicação:
+O projeto precisa de Node.js e Angular CLI instalados localmente.
 
 ```bash
-./mvnw spring-boot:run
+cd frontend
+npm install
+npm start
 ```
 
 Abra:
 
 ```text
-http://localhost:8080/
+http://localhost:4200/
 ```
+
+### Integração com a API
+
+O frontend foi preparado para consumir a API Spring no backend do mesmo repositório. O serviço base e o interceptor ficam em `src/app/core`.
 
 ## Observações de arquitetura
 
