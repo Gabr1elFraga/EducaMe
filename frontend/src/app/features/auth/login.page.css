@@ -2,182 +2,277 @@
   display: block;
 }
 
-.login-shell {
+.auth-page {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(340px, 0.8fr);
+  grid-template-columns: minmax(0, 1.1fr) minmax(360px, 0.9fr);
   gap: 24px;
+  padding: clamp(20px, 4vw, 48px);
   align-items: center;
-  padding: 40px;
 }
 
-.login-copy,
-.login-card {
-  border: 1px solid var(--line);
+.auth-copy,
+.auth-card {
   border-radius: 32px;
-  background: var(--card);
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(16px);
+  padding: 28px;
 }
 
-.login-copy {
-  padding: 36px;
+.auth-copy {
+  display: grid;
+  gap: 20px;
 }
 
-.login-copy h1 {
-  margin: 14px 0 16px;
-  font: 700 clamp(2.6rem, 4.5vw, 5rem) / 0.96 "Trebuchet MS", "Segoe UI",
-    sans-serif;
-  max-width: 10ch;
+.auth-copy h1 {
+  margin: 0;
+  max-width: 11ch;
+  font-size: clamp(2.5rem, 4.6vw, 5rem);
+  line-height: 0.96;
   letter-spacing: -0.05em;
 }
 
-.login-copy p {
+.lead {
+  margin: 0;
   max-width: 56ch;
   color: var(--muted);
   line-height: 1.75;
-  font-size: 1.02rem;
+  font-size: 1.03rem;
 }
 
-.feature-list {
-  margin: 26px 0 0;
-  padding-left: 18px;
+.benefits {
+  display: grid;
+  gap: 14px;
+}
+
+.benefit-item {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+  padding: 16px 18px;
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(248, 251, 255, 0.92));
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-soft);
+}
+
+.benefit-item mat-icon {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  color: var(--primary-strong);
+  background: var(--primary-soft);
+}
+
+.benefit-item strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 1rem;
+}
+
+.benefit-item p,
+.subtitle,
+.info-label,
+.footer-note,
+.brand-subtitle {
+  color: var(--muted);
+}
+
+.benefit-item p {
+  margin: 0;
+  line-height: 1.6;
+}
+
+.info-strip {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  padding: 18px;
+  border-radius: 24px;
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 251, 255, 0.96));
+  box-shadow: var(--shadow-soft);
+}
+
+.info-strip strong {
+  display: block;
+  margin-top: 6px;
   color: var(--text);
-  display: grid;
-  gap: 10px;
+  line-height: 1.4;
 }
 
-.login-card {
-  padding: 28px;
+.auth-card {
   display: grid;
-  gap: 16px;
+  gap: 22px;
 }
 
-.brand {
+.brand-row {
   display: flex;
   align-items: center;
   gap: 14px;
 }
 
-.brand-mark {
-  width: 48px;
-  height: 48px;
+.brand-badge {
+  width: 52px;
+  height: 52px;
   display: grid;
   place-items: center;
-  border-radius: 16px;
-  font: 700 1.25rem/1 "Trebuchet MS", "Segoe UI", sans-serif;
-  color: #10131c;
-  background: linear-gradient(135deg, var(--accent) 0%, #ffe6a7 100%);
-  box-shadow: 0 14px 34px rgba(243, 191, 104, 0.25);
+  border-radius: 18px;
+  color: #fff;
+  font: 800 1.3rem/1 'Plus Jakarta Sans', sans-serif;
+  background: linear-gradient(135deg, var(--primary-strong), #60a5fa);
+  box-shadow: 0 16px 36px rgba(37, 99, 235, 0.18);
 }
 
 .brand-name,
-.login-card h2 {
-  font: 700 1.3rem/1.2 "Trebuchet MS", "Segoe UI", sans-serif;
+.card-heading h2 {
   margin: 0;
+  font-weight: 800;
+  letter-spacing: -0.04em;
 }
 
-.brand-subtitle,
-.subtitle,
-.hint,
-small,
-.eyebrow {
-  color: var(--muted);
+.brand-name {
+  font-size: 1.3rem;
 }
 
-.brand-subtitle,
-.subtitle {
+.brand-subtitle {
   font-size: 0.92rem;
+  margin-top: 4px;
+}
+
+.card-heading {
+  display: grid;
+  gap: 8px;
+}
+
+.card-heading h2 {
+  font-size: clamp(1.8rem, 2.8vw, 2.4rem);
 }
 
 .eyebrow {
   display: inline-flex;
   align-items: center;
-  font: 700 0.74rem/1 "Trebuchet MS", "Segoe UI", sans-serif;
-  letter-spacing: 0.16em;
+  margin: 0;
+  font-weight: 700;
+  font-size: 0.74rem;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
+  color: var(--primary-strong);
 }
 
-label {
+.eyebrow-soft {
+  color: var(--primary);
+}
+
+.auth-form {
   display: grid;
-  gap: 10px;
+  gap: 14px;
 }
 
-label span {
-  color: var(--text);
-  font: 600 0.95rem/1.2 "Trebuchet MS", "Segoe UI", sans-serif;
-}
-
-input {
+.auth-form mat-form-field {
   width: 100%;
+}
+
+.feedback {
   padding: 14px 16px;
   border-radius: 16px;
   border: 1px solid var(--line);
-  color: var(--text);
-  background: rgba(255, 255, 255, 0.04);
-  outline: none;
-  transition: border-color 180ms ease, transform 180ms ease;
+  line-height: 1.6;
+  background: var(--surface-alt);
 }
 
-input:focus {
-  border-color: rgba(243, 191, 104, 0.6);
-  transform: translateY(-1px);
+.feedback.error {
+  color: #991b1b;
+  border-color: rgba(220, 38, 38, 0.18);
+  background: rgba(254, 242, 242, 0.96);
 }
 
-small {
-  line-height: 1.4;
+.feedback.success {
+  color: #14532d;
+  border-color: rgba(15, 157, 88, 0.18);
+  background: rgba(236, 253, 245, 0.96);
 }
 
-.notice {
+.action-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.action-row button {
+  min-height: 52px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.action-row mat-icon {
+  font-size: 1.08rem;
+}
+
+.footer-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   padding: 14px 16px;
-  border-radius: 16px;
+  border-radius: 18px;
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--surface-alt);
   line-height: 1.5;
 }
 
-.notice.error {
-  color: #ffdada;
-  border-color: rgba(255, 122, 122, 0.22);
-  background: rgba(255, 122, 122, 0.08);
+.footer-note mat-icon {
+  color: var(--primary-strong);
 }
 
-.notice.success {
-  color: #dff7ea;
-  border-color: rgba(100, 216, 154, 0.22);
-  background: rgba(100, 216, 154, 0.08);
+:host ::ng-deep .auth-tabs .mat-mdc-tab-header {
+  margin-bottom: 10px;
 }
 
-button {
-  margin-top: 4px;
-  padding: 14px 18px;
-  border: 0;
-  border-radius: 16px;
-  color: #10131c;
-  background: linear-gradient(135deg, var(--accent) 0%, #ffd88c 100%);
-  font: 700 1rem/1 "Trebuchet MS", "Segoe UI", sans-serif;
-  cursor: pointer;
-  transition: transform 180ms ease, opacity 180ms ease;
+:host ::ng-deep .auth-tabs .mat-mdc-tab-labels {
+  background: var(--surface-alt);
+  border-radius: 18px;
+  padding: 6px;
 }
 
-button.secondary {
-  color: var(--text);
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid var(--line);
+:host ::ng-deep .auth-tabs .mat-mdc-tab {
+  min-height: 48px;
 }
 
-button:hover:not(:disabled) {
-  transform: translateY(-2px);
+:host ::ng-deep .auth-tabs .mdc-tab {
+  border-radius: 14px;
 }
 
-button:disabled {
-  opacity: 0.6;
-  cursor: progress;
-}
-
-@media (max-width: 1000px) {
-  .login-shell {
+@media (max-width: 1080px) {
+  .auth-page {
     grid-template-columns: 1fr;
-    padding: 22px;
+  }
+
+  .auth-copy h1 {
+    max-width: 14ch;
+  }
+}
+
+@media (max-width: 720px) {
+  .auth-page {
+    padding: 16px;
+  }
+
+  .auth-copy,
+  .auth-card {
+    padding: 20px;
+    border-radius: 24px;
+  }
+
+  .info-strip,
+  .action-row {
+    grid-template-columns: 1fr;
+  }
+
+  .brand-row {
+    align-items: flex-start;
   }
 }

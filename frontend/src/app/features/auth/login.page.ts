@@ -1,17 +1,28 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import {
-  FormControl,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatTabsModule } from '@angular/material/tabs';
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-login-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatButtonModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    MatTabsModule,
+  ],
   templateUrl: './login.page.html',
   styleUrl: './login.page.css',
 })
@@ -26,11 +37,11 @@ export class LoginPageComponent implements OnInit {
     validators: [Validators.required, Validators.minLength(6)],
   });
 
+  activeTabIndex = 0;
   loading = false;
   signingUp = false;
   errorMessage = '';
   successMessage = '';
-  configError = '';
 
   private redirectUrl = '/';
 
@@ -42,20 +53,23 @@ export class LoginPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.redirectUrl = this.route.snapshot.queryParamMap.get('redirect') ?? '/';
+  }
 
-    if (!this.authService.isConfigured()) {
-      this.configError =
-        'Configure a anon key do Supabase em frontend/src/app/core/config/supabase.config.ts antes de tentar entrar.';
-    }
+  openLoginTab(): void {
+    this.activeTabIndex = 0;
+    this.clearFeedback();
+  }
+
+  openRegisterTab(): void {
+    this.activeTabIndex = 1;
+    this.clearFeedback();
   }
 
   async submit(event?: Event): Promise<void> {
     event?.preventDefault();
     event?.stopPropagation();
 
-    this.errorMessage = '';
-    this.successMessage = '';
-    this.configError = this.configError;
+    this.clearFeedback();
 
     if (this.emailControl.invalid || this.passwordControl.invalid) {
       this.emailControl.markAsTouched();
@@ -64,23 +78,21 @@ export class LoginPageComponent implements OnInit {
     }
 
     this.loading = true;
-    this.successMessage = 'Autenticando...';
 
     try {
       const session = await this.authService.signIn(
         this.emailControl.value.trim(),
         this.passwordControl.value,
       );
+
       if (!session) {
-        throw new Error('Supabase nao retornou uma sessao apos o login.');
+        throw new Error('Falha ao autenticar a conta.');
       }
 
-      this.successMessage = 'Sessao criada. Redirecionando...';
       await this.router.navigateByUrl(this.redirectUrl);
     } catch (error) {
       console.error('Login failed', error);
       this.errorMessage = this.normalizeError(error);
-      this.successMessage = '';
     } finally {
       this.loading = false;
     }
@@ -90,8 +102,7 @@ export class LoginPageComponent implements OnInit {
     event?.preventDefault();
     event?.stopPropagation();
 
-    this.errorMessage = '';
-    this.successMessage = '';
+    this.clearFeedback();
 
     if (this.emailControl.invalid || this.passwordControl.invalid) {
       this.emailControl.markAsTouched();
@@ -100,7 +111,6 @@ export class LoginPageComponent implements OnInit {
     }
 
     this.signingUp = true;
-    this.successMessage = 'Criando conta...';
 
     try {
       const result = await this.authService.signUp(
@@ -109,41 +119,47 @@ export class LoginPageComponent implements OnInit {
       );
 
       if (result.session) {
-        this.successMessage = 'Conta criada e autenticada com sucesso.';
         await this.router.navigateByUrl(this.redirectUrl);
         return;
       }
 
       this.successMessage =
-        'Conta criada. Se o email confirmation estiver ativo, confirme o email para entrar.';
+        'Cadastro concluído. Se necessário, confirme seu e-mail para continuar.';
     } catch (error) {
       console.error('Sign up failed', error);
       this.errorMessage = this.normalizeError(error);
-      this.successMessage = '';
     } finally {
       this.signingUp = false;
     }
   }
 
+  clearFeedback(): void {
+    this.errorMessage = '';
+    this.successMessage = '';
+  }
+
   private normalizeError(error: unknown): string {
     if (!(error instanceof Error)) {
-      return 'Falha ao autenticar.';
+      return 'Não foi possível concluir a autenticação.';
     }
 
     const message = error.message.toLowerCase();
 
-    if (message.includes('invalid login credentials') || message.includes('invalid_credentials')) {
-      return 'Usuario ou senha invalidos.';
+    if (
+      message.includes('invalid login credentials') ||
+      message.includes('invalid_credentials')
+    ) {
+      return 'E-mail ou senha inválidos.';
     }
 
     if (message.includes('email not confirmed')) {
-      return 'Email ainda nao confirmado no Supabase.';
+      return 'Sua conta ainda não foi confirmada.';
     }
 
-    if (message.includes('invalid api key') || message.includes('invalid api key')) {
-      return 'A chave publica do Supabase esta incorreta.';
+    if (message.includes('invalid api key')) {
+      return 'Não foi possível autenticar no momento.';
     }
 
-    return error.message;
+    return 'Não foi possível concluir a autenticação.';
   }
 }

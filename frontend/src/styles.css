@@ -1,17 +1,24 @@
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import '@angular/material/prebuilt-themes/azure-blue.css';
+
 :root {
-  color-scheme: dark;
-  --bg: #07111f;
-  --bg-soft: rgba(255, 255, 255, 0.05);
-  --card: rgba(8, 14, 24, 0.82);
-  --line: rgba(255, 255, 255, 0.09);
-  --text: #edf2ff;
-  --muted: #97a4be;
-  --accent: #f3bf68;
-  --accent-2: #6ad4ff;
-  --accent-3: #8b93ff;
-  --success: #64d89a;
-  --warning: #f3c969;
-  --shadow: 0 28px 70px rgba(0, 0, 0, 0.35);
+  color-scheme: light;
+  --bg: #f5f8fc;
+  --bg-soft: #eef4ff;
+  --surface: #ffffff;
+  --surface-alt: #f8fbff;
+  --line: #d9e3f2;
+  --line-strong: #c8d6ea;
+  --text: #1f2937;
+  --muted: #64748b;
+  --primary: #2563eb;
+  --primary-soft: #dbeafe;
+  --primary-strong: #1d4ed8;
+  --success: #0f9d58;
+  --warning: #d97706;
+  --danger: #dc2626;
+  --shadow: 0 20px 60px rgba(15, 23, 42, 0.08);
+  --shadow-soft: 0 12px 32px rgba(37, 99, 235, 0.08);
 }
 
 * {
@@ -20,6 +27,12 @@
 
 html {
   scroll-behavior: smooth;
+  background: var(--bg);
+}
+
+html,
+body {
+  min-height: 100%;
 }
 
 body {
@@ -27,10 +40,15 @@ body {
   min-height: 100vh;
   color: var(--text);
   background:
-    radial-gradient(circle at 18% 14%, rgba(106, 212, 255, 0.16), transparent 24%),
-    radial-gradient(circle at 82% 8%, rgba(139, 147, 255, 0.16), transparent 22%),
-    linear-gradient(160deg, #050913 0%, #08111f 44%, #050913 100%);
-  font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+    radial-gradient(circle at 14% 12%, rgba(37, 99, 235, 0.08), transparent 22%),
+    radial-gradient(circle at 86% 8%, rgba(59, 130, 246, 0.08), transparent 18%),
+    linear-gradient(180deg, #ffffff 0%, #f5f8fc 100%);
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+app-root {
+  display: block;
+  min-height: 100vh;
 }
 
 a {
@@ -43,4 +61,26 @@ input,
 select,
 textarea {
   font: inherit;
+}
+
+.material-symbols-rounded {
+  font-family: 'Material Symbols Rounded';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 1.2rem;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+}
+
+.app-surface {
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(217, 227, 242, 0.9);
+  box-shadow: var(--shadow);
 }

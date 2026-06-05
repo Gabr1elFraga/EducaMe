@@ -1,5 +1,5 @@
 <div class="shell">
-  <aside class="sidebar">
+  <aside class="sidebar app-surface">
     <div class="brand">
       <div class="brand-mark">E</div>
       <div>
@@ -8,49 +8,58 @@
       </div>
     </div>
 
-    <nav class="nav">
+    <mat-nav-list class="nav-list">
       <a
+        mat-list-item
         class="nav-item"
         *ngFor="let item of navItems"
         [href]="'#' + item.fragment"
       >
-        {{ item.label }}
+        <span>{{ item.label }}</span>
       </a>
-    </nav>
+    </mat-nav-list>
 
-    <section class="sidebar-card">
+    <mat-card class="sidebar-card">
       <p class="eyebrow">Arquitetura</p>
-      <h2>Angular modularizado</h2>
+      <h2>Interface branca, moderna e consistente</h2>
       <p>
-        A estrutura foi separada em core, shared e features para sustentar
-        evolucao sem espalhar logica pelos componentes.
+        O frontend usa Angular Material, tipografia do Google Fonts e um tema
+        claro para reforçar a legibilidade em todas as telas.
       </p>
       <div class="pill-row">
-        <span class="pill success">Standalone</span>
-        <span class="pill neutral">Responsive</span>
+        <span class="pill">Material</span>
+        <span class="pill">Responsive</span>
+        <span class="pill">Blue Accent</span>
       </div>
-    </section>
+    </mat-card>
   </aside>
 
   <div class="workspace">
-    <header class="topbar">
-      <div>
+    <mat-toolbar class="topbar app-surface">
+      <div class="toolbar-copy">
         <p class="eyebrow">Frontend Angular</p>
         <h1>Painel inicial da EducaMe</h1>
       </div>
 
       <div class="topbar-actions">
-        <div class="topbar-action">
+        <div class="status-chip">
           <span class="status-dot"></span>
           <span>Conectado ao backend</span>
         </div>
 
-        <div class="topbar-user" *ngIf="authService.currentUser as user">
-          <span>{{ user.email }}</span>
-          <button type="button" (click)="logout()">Sair</button>
-        </div>
+        <button
+          mat-stroked-button
+          color="primary"
+          class="user-chip"
+          *ngIf="authService.currentUser as user"
+          type="button"
+          (click)="logout()"
+        >
+          <span class="user-email">{{ user.email }}</span>
+          <mat-icon class="material-symbols-rounded" aria-hidden="true">logout</mat-icon>
+        </button>
       </div>
-    </header>
+    </mat-toolbar>
 
     <main class="content">
       <router-outlet />

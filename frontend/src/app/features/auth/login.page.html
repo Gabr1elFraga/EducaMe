@@ -1,80 +1,215 @@
-<section class="login-shell">
-  <div class="login-copy">
-    <p class="eyebrow">Acesso autenticado</p>
-    <h1>Entre com sua conta do Supabase</h1>
-    <p>
-      O login do frontend usa email e senha do Supabase Auth. Nao existe senha
-      padrao do projeto. Se a conta ainda nao existir, crie o usuario no painel
-      do Supabase Auth ou habilite o fluxo de cadastro.
+<section class="auth-page">
+  <mat-card class="auth-copy app-surface">
+    <p class="eyebrow">EducaMe</p>
+    <h1>Uma experiência de ensino mais limpa, elegante e profissional.</h1>
+    <p class="lead">
+      Acesse sua conta para acompanhar aulas, alunos e pagamentos em uma
+      interface branca, leve e consistente em toda a plataforma.
     </p>
 
-    <ul class="feature-list">
-      <li>Session salva no browser.</li>
-      <li>Token enviado para a API Spring.</li>
-      <li>Rota protegida pelo guard do Angular.</li>
-    </ul>
-  </div>
+    <div class="benefits">
+      <article class="benefit-item">
+        <mat-icon class="material-symbols-rounded" aria-hidden="true">verified</mat-icon>
+        <div>
+          <strong>Acesso seguro</strong>
+          <p>Autenticação com sessão persistente e navegação protegida.</p>
+        </div>
+      </article>
 
-  <form class="login-card" novalidate (submit)="submit($event)">
-    <div class="brand">
-      <div class="brand-mark">E</div>
+      <article class="benefit-item">
+        <mat-icon class="material-symbols-rounded" aria-hidden="true">calendar_month</mat-icon>
+        <div>
+          <strong>Fluxo centralizado</strong>
+          <p>Login, cadastro e painel alinhados ao mesmo padrão visual.</p>
+        </div>
+      </article>
+
+      <article class="benefit-item">
+        <mat-icon class="material-symbols-rounded" aria-hidden="true">palette</mat-icon>
+        <div>
+          <strong>Interface moderna</strong>
+          <p>Tipografia Google Fonts, azul suave e componentes Material.</p>
+        </div>
+      </article>
+    </div>
+
+    <div class="info-strip">
+      <div>
+        <span class="info-label">Ambiente</span>
+        <strong>Clareza visual para operações diárias</strong>
+      </div>
+      <div>
+        <span class="info-label">Navegação</span>
+        <strong>Sem ruído técnico na tela</strong>
+      </div>
+    </div>
+  </mat-card>
+
+  <mat-card class="auth-card app-surface">
+    <div class="brand-row">
+      <div class="brand-badge">E</div>
       <div>
         <div class="brand-name">EducaMe</div>
         <div class="brand-subtitle">Plataforma de ensino</div>
       </div>
     </div>
 
-    <h2>Login</h2>
-    <p class="subtitle">Use a conta cadastrada no Supabase.</p>
-
-    <div class="notice error" *ngIf="configError">
-      {{ configError }}
+    <div class="card-heading">
+      <p class="eyebrow eyebrow-soft">Acesso</p>
+      <h2>Entre ou crie sua conta</h2>
+      <p class="subtitle">
+        Use o seu e-mail para acessar a área administrativa da plataforma.
+      </p>
     </div>
 
-    <div class="notice error" *ngIf="errorMessage">
-      {{ errorMessage }}
+    <mat-tab-group
+      [(selectedIndex)]="activeTabIndex"
+      animationDuration="200ms"
+      class="auth-tabs"
+      (selectedTabChange)="clearFeedback()"
+    >
+      <mat-tab label="Entrar">
+        <form class="auth-form" novalidate (ngSubmit)="submit($event)">
+          <mat-form-field appearance="outline">
+            <mat-label>E-mail</mat-label>
+            <input
+              matInput
+              type="email"
+              [formControl]="emailControl"
+              placeholder="voce@educame.com"
+              autocomplete="email"
+            />
+            <mat-error *ngIf="emailControl.touched && emailControl.hasError('required')">
+              Informe seu e-mail.
+            </mat-error>
+            <mat-error *ngIf="emailControl.touched && emailControl.hasError('email')">
+              Informe um e-mail válido.
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Senha</mat-label>
+            <input
+              matInput
+              type="password"
+              [formControl]="passwordControl"
+              placeholder="••••••••"
+              autocomplete="current-password"
+            />
+            <mat-error *ngIf="passwordControl.touched && passwordControl.hasError('required')">
+              Informe sua senha.
+            </mat-error>
+            <mat-error *ngIf="passwordControl.touched && passwordControl.hasError('minlength')">
+              A senha precisa ter pelo menos 6 caracteres.
+            </mat-error>
+          </mat-form-field>
+
+          <div class="feedback error" *ngIf="errorMessage">
+            {{ errorMessage }}
+          </div>
+
+          <div class="feedback success" *ngIf="successMessage">
+            {{ successMessage }}
+          </div>
+
+          <div class="action-row">
+            <button
+              mat-flat-button
+              color="primary"
+              type="submit"
+              [disabled]="loading || signingUp"
+            >
+              <mat-icon class="material-symbols-rounded" aria-hidden="true">login</mat-icon>
+              <span>{{ loading ? 'Entrando...' : 'Entrar' }}</span>
+            </button>
+
+            <button
+              mat-stroked-button
+              color="primary"
+              type="button"
+              [disabled]="loading || signingUp"
+              (click)="openRegisterTab()"
+            >
+              <mat-icon class="material-symbols-rounded" aria-hidden="true">person_add</mat-icon>
+              <span>Criar conta</span>
+            </button>
+          </div>
+        </form>
+      </mat-tab>
+
+      <mat-tab label="Cadastro">
+        <form class="auth-form" novalidate (ngSubmit)="signUp($event)">
+          <mat-form-field appearance="outline">
+            <mat-label>E-mail</mat-label>
+            <input
+              matInput
+              type="email"
+              [formControl]="emailControl"
+              placeholder="voce@educame.com"
+              autocomplete="email"
+            />
+            <mat-error *ngIf="emailControl.touched && emailControl.hasError('required')">
+              Informe seu e-mail.
+            </mat-error>
+            <mat-error *ngIf="emailControl.touched && emailControl.hasError('email')">
+              Informe um e-mail válido.
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Senha</mat-label>
+            <input
+              matInput
+              type="password"
+              [formControl]="passwordControl"
+              placeholder="••••••••"
+              autocomplete="new-password"
+            />
+            <mat-error *ngIf="passwordControl.touched && passwordControl.hasError('required')">
+              Informe sua senha.
+            </mat-error>
+            <mat-error *ngIf="passwordControl.touched && passwordControl.hasError('minlength')">
+              A senha precisa ter pelo menos 6 caracteres.
+            </mat-error>
+          </mat-form-field>
+
+          <div class="feedback error" *ngIf="errorMessage">
+            {{ errorMessage }}
+          </div>
+
+          <div class="feedback success" *ngIf="successMessage">
+            {{ successMessage }}
+          </div>
+
+          <div class="action-row">
+            <button
+              mat-flat-button
+              color="primary"
+              type="submit"
+              [disabled]="loading || signingUp"
+            >
+              <mat-icon class="material-symbols-rounded" aria-hidden="true">badge</mat-icon>
+              <span>{{ signingUp ? 'Criando...' : 'Criar conta' }}</span>
+            </button>
+
+            <button
+              mat-stroked-button
+              color="primary"
+              type="button"
+              [disabled]="loading || signingUp"
+              (click)="openLoginTab()"
+            >
+              <mat-icon class="material-symbols-rounded" aria-hidden="true">arrow_back</mat-icon>
+              <span>Voltar para login</span>
+            </button>
+          </div>
+        </form>
+      </mat-tab>
+    </mat-tab-group>
+
+    <div class="footer-note">
+      <mat-icon class="material-symbols-rounded" aria-hidden="true">shield</mat-icon>
+      <span>Ao autenticar, você será redirecionado para o painel principal.</span>
     </div>
-
-    <div class="notice success" *ngIf="successMessage">
-      {{ successMessage }}
-    </div>
-
-    <label>
-      <span>Email</span>
-      <input
-        type="email"
-        [formControl]="emailControl"
-        placeholder="voce@educame.com"
-        autocomplete="email"
-      />
-      <small *ngIf="emailControl.touched && emailControl.invalid">
-        Informe um email valido.
-      </small>
-    </label>
-
-    <label>
-      <span>Senha</span>
-      <input
-        type="password"
-        [formControl]="passwordControl"
-        placeholder="••••••••"
-        autocomplete="current-password"
-      />
-      <small *ngIf="passwordControl.touched && passwordControl.invalid">
-        A senha precisa ter pelo menos 6 caracteres.
-      </small>
-    </label>
-
-    <button type="submit" [disabled]="loading || signingUp">
-      {{ loading ? 'Entrando...' : 'Entrar' }}
-    </button>
-
-    <button type="button" class="secondary" [disabled]="loading || signingUp" (click)="signUp($event)">
-      {{ signingUp ? 'Criando...' : 'Criar conta' }}
-    </button>
-
-    <p class="hint">
-      Depois do login, voce vai para o dashboard protegido.
-    </p>
-  </form>
+  </mat-card>
 </section>

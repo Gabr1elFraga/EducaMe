@@ -1,59 +1,74 @@
 <ng-container *ngIf="loading">
-  <section class="card">
-    <p class="eyebrow">Carregando</p>
-    <h3>Buscando dados da API</h3>
-    <p class="hero-text">
-      O frontend esta consultando o backend Spring com o token do Supabase.
-    </p>
-  </section>
+  <mat-card class="state-card app-surface">
+    <mat-progress-spinner diameter="44" mode="indeterminate"></mat-progress-spinner>
+    <div>
+      <p class="eyebrow">Carregando</p>
+      <h3>Buscando dados da API</h3>
+      <p class="hero-text">
+        O frontend está consultando o backend Spring com a sessão ativa.
+      </p>
+    </div>
+  </mat-card>
 </ng-container>
 
 <ng-container *ngIf="errorMessage">
-  <section class="card">
-    <p class="eyebrow">Erro</p>
-    <h3>Falha ao carregar o dashboard</h3>
-    <p class="hero-text">{{ errorMessage }}</p>
-  </section>
+  <mat-card class="state-card app-surface state-error">
+    <mat-icon class="material-symbols-rounded" aria-hidden="true">error</mat-icon>
+    <div>
+      <p class="eyebrow">Erro</p>
+      <h3>Falha ao carregar o dashboard</h3>
+      <p class="hero-text">{{ errorMessage }}</p>
+    </div>
+  </mat-card>
 </ng-container>
 
 <ng-container *ngIf="!loading && !errorMessage && summary">
-  <section class="hero" id="dashboard">
-    <div class="hero-copy">
-      <p class="eyebrow">Painel operacional</p>
-      <h2>Controle aulas, alunos e agenda em um só lugar.</h2>
-      <p class="hero-text">
-        Acompanhe o fluxo diário da plataforma, identifique pendências e
-        organize a operação sem dispersar a regra de negócio.
-      </p>
-      <div class="hero-actions">
-        <a class="button primary" href="#aulas">Ver próximas aulas</a>
-        <a class="button secondary" href="#financeiro">Abrir financeiro</a>
-      </div>
-    </div>
+  <section class="hero">
+    <mat-card class="hero-card app-surface">
+      <div class="hero-copy">
+        <mat-chip-set aria-label="Destaques da plataforma">
+          <mat-chip>Gestão central</mat-chip>
+          <mat-chip>Layout profissional</mat-chip>
+          <mat-chip>Base clara</mat-chip>
+        </mat-chip-set>
 
-    <div class="hero-panel">
-      <div class="panel-top">
-        <div>
-          <p class="eyebrow">Resumo de hoje</p>
-          <h3>{{ summary.dateLabel }}</h3>
+        <p class="eyebrow">Painel operacional</p>
+        <h2>Controle aulas, alunos e agenda em um só lugar.</h2>
+        <p class="hero-text">
+          Acompanhe o fluxo diário da plataforma, identifique pendências e
+          organize a operação sem dispersar a regra de negócio.
+        </p>
+
+        <div class="hero-actions">
+          <a mat-flat-button color="primary" href="#aulas">Ver próximas aulas</a>
+          <a mat-stroked-button color="primary" href="#financeiro">Abrir financeiro</a>
         </div>
-        <span class="status-chip">Ao vivo</span>
       </div>
 
-      <div class="stats-grid">
-        <app-stat-card
-          *ngFor="let metric of summary.metrics"
-          [label]="metric.label"
-          [value]="metric.value"
-          [description]="metric.description"
-          [tone]="metric.tone"
-        />
+      <div class="hero-panel">
+        <div class="panel-top">
+          <div>
+            <p class="eyebrow">Resumo de hoje</p>
+            <h3>{{ summary.dateLabel }}</h3>
+          </div>
+          <span class="status-chip">Ao vivo</span>
+        </div>
+
+        <div class="stats-grid">
+          <app-stat-card
+            *ngFor="let metric of summary.metrics"
+            [label]="metric.label"
+            [value]="metric.value"
+            [description]="metric.description"
+            [tone]="metric.tone"
+          />
+        </div>
       </div>
-    </div>
+    </mat-card>
   </section>
 
   <section class="content-grid">
-    <section class="card schedule" id="aulas">
+    <mat-card class="section-card app-surface schedule" id="aulas">
       <div class="card-head">
         <div>
           <p class="eyebrow">Próximas aulas</p>
@@ -61,6 +76,8 @@
         </div>
         <span class="mini-badge">Atualizado agora</span>
       </div>
+
+      <mat-divider></mat-divider>
 
       <div class="timeline">
         <article class="timeline-item" *ngFor="let lesson of summary.lessons">
@@ -72,9 +89,9 @@
           <span class="label" [attr.data-status]="lesson.status">{{ lesson.status }}</span>
         </article>
       </div>
-    </section>
+    </mat-card>
 
-    <section class="card finance" id="financeiro">
+    <mat-card class="section-card app-surface finance" id="financeiro">
       <div class="card-head">
         <div>
           <p class="eyebrow">Financeiro</p>
@@ -82,6 +99,8 @@
         </div>
         <span class="mini-badge">{{ summary.revenue }}</span>
       </div>
+
+      <mat-divider></mat-divider>
 
       <div class="chart" aria-label="Receita semanal ilustrativa">
         <div class="bar" style="--h: 35%"><span>Seg</span></div>
@@ -98,17 +117,19 @@
         <div><span>Pagamentos atrasados</span><strong>{{ summary.overduePayments }}</strong></div>
         <div><span>Ticket médio</span><strong>{{ summary.averageTicket }}</strong></div>
       </div>
-    </section>
+    </mat-card>
   </section>
 
   <section class="content-grid bottom-grid">
-    <section class="card" id="alunos">
+    <mat-card class="section-card app-surface" id="alunos">
       <div class="card-head">
         <div>
           <p class="eyebrow">Alunos</p>
           <h3>Movimento recente</h3>
         </div>
       </div>
+
+      <mat-divider></mat-divider>
 
       <div class="stack-list">
         <article class="stack-item" *ngFor="let student of summary.studentUpdates">
@@ -119,15 +140,17 @@
           <span class="label" [attr.data-status]="student.status">{{ student.status }}</span>
         </article>
       </div>
-    </section>
+    </mat-card>
 
-    <section class="card" id="professores">
+    <mat-card class="section-card app-surface" id="professores">
       <div class="card-head">
         <div>
           <p class="eyebrow">Professores</p>
           <h3>Disponibilidade crítica</h3>
         </div>
       </div>
+
+      <mat-divider></mat-divider>
 
       <div class="teacher-grid">
         <article class="teacher-card" *ngFor="let teacher of summary.teacherAvailability">
@@ -138,10 +161,12 @@
       </div>
 
       <div class="notice" id="avaliacoes">
-        <p class="eyebrow">Avaliações</p>
-        <strong>{{ summary.rating }}</strong>
+        <div>
+          <p class="eyebrow">Avaliações</p>
+          <strong>{{ summary.rating }}</strong>
+        </div>
         <span>Baseado em {{ summary.reviewCount }} avaliações registradas</span>
       </div>
-    </section>
+    </mat-card>
   </section>
 </ng-container>
