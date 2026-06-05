@@ -32,8 +32,15 @@ export class AuthService {
     void this.loadSession();
 
     this.client.auth.onAuthStateChange(
-      (_event: AuthChangeEvent, session: Session | null) => {
-        this.sessionSubject.next(session);
+      (event: AuthChangeEvent, session: Session | null) => {
+        if (session) {
+          this.sessionSubject.next(session);
+          return;
+        }
+
+        if (event === 'SIGNED_OUT' || this.sessionSubject.value === undefined) {
+          this.sessionSubject.next(null);
+        }
       },
     );
   }
