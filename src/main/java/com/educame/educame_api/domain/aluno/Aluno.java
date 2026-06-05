@@ -1,0 +1,59 @@
+package com.educame.educame_api.domain.aluno;
+
+import com.educame.educame_api.domain.endereco.Endereco;
+import com.educame.educame_api.domain.enums.GeneroTipo;
+
+import java.time.LocalDate;
+import java.util.Objects;
+import java.util.UUID;
+
+public class Aluno {
+	private UUID id;
+	private UUID authUserId;
+	private String nome;
+	private String sobrenome;
+	private LocalDate dataNascimento;
+	private GeneroTipo genero;
+	private Endereco endereco;
+
+	public Aluno() {
+	}
+
+	public Aluno(UUID id, UUID authUserId, String nome, String sobrenome, LocalDate dataNascimento, GeneroTipo genero, Endereco endereco) {
+		this.id = id;
+		this.authUserId = authUserId;
+		this.nome = nome;
+		this.sobrenome = sobrenome;
+		this.dataNascimento = dataNascimento;
+		this.genero = genero;
+		this.endereco = endereco;
+	}
+
+	public UUID getId() { return id; }
+	public void setId(UUID id) { this.id = id; }
+	public UUID getAuthUserId() { return authUserId; }
+	public void setAuthUserId(UUID authUserId) { this.authUserId = authUserId; }
+	public String getNome() { return nome; }
+	public void setNome(String nome) { this.nome = nome; }
+	public String getSobrenome() { return sobrenome; }
+	public void setSobrenome(String sobrenome) { this.sobrenome = sobrenome; }
+	public LocalDate getDataNascimento() { return dataNascimento; }
+	public void setDataNascimento(LocalDate dataNascimento) { this.dataNascimento = dataNascimento; }
+	public GeneroTipo getGenero() { return genero; }
+	public void setGenero(GeneroTipo genero) { this.genero = genero; }
+	public Endereco getEndereco() { return endereco; }
+	public void setEndereco(Endereco endereco) { this.endereco = endereco; }
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Aluno aluno = (Aluno) o;
+		return Objects.equals(id, aluno.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+}
