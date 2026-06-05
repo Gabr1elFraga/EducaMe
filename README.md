@@ -122,7 +122,14 @@ A primeira tela é um dashboard operacional com:
 
 ### Como executar o frontend
 
-O projeto precisa de Node.js e Angular CLI instalados localmente.
+O projeto usa a versão do Node definida em [`.nvmrc`](/Users/gabrielfraga/Documents/Faculdade/educame-api/.nvmrc).
+
+```bash
+source ~/.nvm/nvm.sh
+nvm use
+```
+
+Depois:
 
 ```bash
 cd frontend
