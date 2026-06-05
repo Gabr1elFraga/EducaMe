@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EducaMe | Dashboard</title>
+  <meta name="description" content="Dashboard inicial da EducaMe para acompanhar aulas, alunos, professores e finanças.">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="page-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">E</div>
+        <div>
+          <div class="brand-name">EducaMe</div>
+          <div class="brand-subtitle">Plataforma de ensino</div>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <a class="nav-item active" href="#dashboard">Dashboard</a>
+        <a class="nav-item" href="#aulas">Aulas</a>
+        <a class="nav-item" href="#alunos">Alunos</a>
+        <a class="nav-item" href="#professores">Professores</a>
+        <a class="nav-item" href="#financeiro">Financeiro</a>
+        <a class="nav-item" href="#avaliacoes">Avaliações</a>
+      </nav>
+
+      <section class="sidebar-card">
+        <p class="eyebrow">Ambiente</p>
+        <h2>Base conectada ao Supabase</h2>
+        <p>Estrutura pronta para evoluir em Clean Architecture, com frontend consumindo a API REST.</p>
+        <div class="pill-row">
+          <span class="pill success">API Online</span>
+          <span class="pill neutral">Frontend Inicial</span>
+        </div>
+      </section>
+    </aside>
+
+    <main class="main">
+      <section class="hero" id="dashboard">
+        <div class="hero-copy">
+          <p class="eyebrow">Painel operacional</p>
+          <h1>Controle aulas, alunos e agenda em um só lugar.</h1>
+          <p class="hero-text">
+            Acompanhe o fluxo diário da plataforma, identifique pendências e organize a operação sem dispersar a regra de negócio.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="#aulas">Ver próximas aulas</a>
+            <a class="button secondary" href="#financeiro">Abrir financeiro</a>
+          </div>
+        </div>
+
+        <div class="hero-panel">
+          <div class="panel-top">
+            <div>
+              <p class="eyebrow">Resumo de hoje</p>
+              <h2>Terça, 04 de Junho</h2>
+            </div>
+            <span class="status-dot">Ao vivo</span>
+          </div>
+
+          <div class="stats-grid">
+            <article class="stat-card accent-a">
+              <span class="stat-label">Aulas marcadas</span>
+              <strong>18</strong>
+              <small>+4 nesta semana</small>
+            </article>
+            <article class="stat-card accent-b">
+              <span class="stat-label">Alunos ativos</span>
+              <strong>126</strong>
+              <small>92% recorrência</small>
+            </article>
+            <article class="stat-card accent-c">
+              <span class="stat-label">Pendências</span>
+              <strong>07</strong>
+              <small>2 pagamentos em aberto</small>
+            </article>
+            <article class="stat-card accent-d">
+              <span class="stat-label">Disponibilidades</span>
+              <strong>24</strong>
+              <small>Slots livres hoje</small>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-grid">
+        <section class="card schedule" id="aulas">
+          <div class="card-head">
+            <div>
+              <p class="eyebrow">Próximas aulas</p>
+              <h2>Agenda do dia</h2>
+            </div>
+            <span class="mini-badge">Atualizado agora</span>
+          </div>
+
+          <div class="timeline">
+            <article class="timeline-item">
+              <span class="time">08:00</span>
+              <div>
+                <h3>Matemática com Ana Luísa</h3>
+                <p>Aluno: João Pedro · Modalidade: online · Duração: 50min</p>
+              </div>
+              <span class="label success">Confirmada</span>
+            </article>
+            <article class="timeline-item">
+              <span class="time">10:30</span>
+              <div>
+                <h3>Português com Carlos Menezes</h3>
+                <p>Aluno: Larissa Souza · Modalidade: presencial · Duração: 1h</p>
+              </div>
+              <span class="label warning">Aguardando</span>
+            </article>
+            <article class="timeline-item">
+              <span class="time">14:00</span>
+              <div>
+                <h3>Física com Beatriz Nunes</h3>
+                <p>Aluno: Miguel Santos · Modalidade: online · Duração: 50min</p>
+              </div>
+              <span class="label success">Confirmada</span>
+            </article>
+          </div>
+        </section>
+
+        <section class="card" id="financeiro">
+          <div class="card-head">
+            <div>
+              <p class="eyebrow">Financeiro</p>
+              <h2>Receita semanal</h2>
+            </div>
+            <span class="mini-badge">R$ 8.420</span>
+          </div>
+
+          <div class="chart">
+            <div class="bar" style="--h: 35%"><span>Seg</span></div>
+            <div class="bar" style="--h: 56%"><span>Ter</span></div>
+            <div class="bar" style="--h: 48%"><span>Qua</span></div>
+            <div class="bar active" style="--h: 75%"><span>Qui</span></div>
+            <div class="bar" style="--h: 62%"><span>Sex</span></div>
+            <div class="bar" style="--h: 81%"><span>Sáb</span></div>
+            <div class="bar" style="--h: 44%"><span>Dom</span></div>
+          </div>
+
+          <div class="summary-list">
+            <div><span>Pagamentos aprovados</span><strong>34</strong></div>
+            <div><span>Pagamentos atrasados</span><strong>2</strong></div>
+            <div><span>Ticket médio</span><strong>R$ 246</strong></div>
+          </div>
+        </section>
+      </section>
+
+      <section class="content-grid bottom-grid">
+        <section class="card" id="alunos">
+          <div class="card-head">
+            <div>
+              <p class="eyebrow">Alunos</p>
+              <h2>Movimento recente</h2>
+            </div>
+          </div>
+
+          <div class="stack-list">
+            <article class="stack-item">
+              <div>
+                <strong>Marina Costa</strong>
+                <p>Nova matrícula em reforço escolar</p>
+              </div>
+              <span class="label neutral">Novo</span>
+            </article>
+            <article class="stack-item">
+              <div>
+                <strong>Thiago Alves</strong>
+                <p>Reagendou a aula de química para sexta-feira</p>
+              </div>
+              <span class="label warning">Reagendado</span>
+            </article>
+            <article class="stack-item">
+              <div>
+                <strong>Julia Ferreira</strong>
+                <p>Pagou o plano mensal e liberou novas aulas</p>
+              </div>
+              <span class="label success">Regularizado</span>
+            </article>
+          </div>
+        </section>
+
+        <section class="card" id="professores">
+          <div class="card-head">
+            <div>
+              <p class="eyebrow">Professores</p>
+              <h2>Disponibilidade crítica</h2>
+            </div>
+          </div>
+
+          <div class="teacher-grid">
+            <article class="teacher-card">
+              <strong>Ana Luísa</strong>
+              <span>Matemática</span>
+              <p>3 slots livres</p>
+            </article>
+            <article class="teacher-card">
+              <strong>Beatriz Nunes</strong>
+              <span>Física</span>
+              <p>2 slots livres</p>
+            </article>
+            <article class="teacher-card">
+              <strong>Carlos Menezes</strong>
+              <span>Português</span>
+              <p>1 slot livre</p>
+            </article>
+          </div>
+
+          <div class="notice" id="avaliacoes">
+            <p class="eyebrow">Avaliações</p>
+            <strong>4.8 / 5</strong>
+            <span>Baseado em 312 avaliações registradas</span>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

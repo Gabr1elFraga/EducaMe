@@ -98,6 +98,32 @@ SUPABASE_DB_PASSWORD=...
 - `SUPABASE_JWT_ISSUER`
 - `SUPABASE_JWKS_URI`
 
+## Frontend
+
+O projeto já expõe um dashboard inicial em `src/main/resources/static`, servido pela própria aplicação Spring na raiz `/`.
+
+### O que esse dashboard cobre
+
+- visão geral das aulas do dia
+- métricas operacionais
+- acompanhamento financeiro
+- movimentação recente de alunos
+- disponibilidade de professores
+
+### Como acessar
+
+Depois de subir a aplicação:
+
+```bash
+./mvnw spring-boot:run
+```
+
+Abra:
+
+```text
+http://localhost:8080/
+```
+
 ## Observações de arquitetura
 
 - A camada `domain` não deve depender de Spring, Hibernate ou Supabase.
