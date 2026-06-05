@@ -63,12 +63,34 @@ export class LoginPageComponent implements OnInit {
         this.emailControl.value.trim(),
         this.passwordControl.value,
       );
+      await this.authService.loadSession();
       await this.router.navigateByUrl(this.redirectUrl);
     } catch (error) {
-      this.errorMessage =
-        error instanceof Error ? error.message : 'Falha ao autenticar.';
+      this.errorMessage = this.normalizeError(error);
     } finally {
       this.loading = false;
     }
+  }
+
+  private normalizeError(error: unknown): string {
+    if (!(error instanceof Error)) {
+      return 'Falha ao autenticar.';
+    }
+
+    const message = error.message.toLowerCase();
+
+    if (message.includes('invalid login credentials') || message.includes('invalid_credentials')) {
+      return 'Usuario ou senha invalidos.';
+    }
+
+    if (message.includes('email not confirmed')) {
+      return 'Email ainda nao confirmado no Supabase.';
+    }
+
+    if (message.includes('invalid api key') || message.includes('invalid api key')) {
+      return 'A chave publica do Supabase esta incorreta.';
+    }
+
+    return error.message;
   }
 }

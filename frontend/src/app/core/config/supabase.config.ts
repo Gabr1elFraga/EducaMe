@@ -5,5 +5,5 @@ export interface SupabaseConfig {
 
 export const SUPABASE_CONFIG: SupabaseConfig = {
   url: 'https://taowvgtoshqnzfjbeigv.supabase.co',
-  anonKey: 'REPLACE_WITH_SUPABASE_ANON_KEY',
+  anonKey: 'sb_publishable_iiPrqXtPPnbOWSlq-WdixQ_aYcgLxVo',
 };
