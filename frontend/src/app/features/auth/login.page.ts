@@ -170,21 +170,14 @@ export class LoginPageComponent implements OnInit {
         const result = await this.authService.signUp(
           form.controls.email.value.trim(),
           form.controls.password.value,
+          {
+            profile_type: 'professor',
+            nome: form.controls.nome.value.trim(),
+            sobrenome: form.controls.sobrenome.value.trim(),
+            cpf: form.controls.cpf.value.trim(),
+            data_nascimento: form.controls.dataNascimento.value,
+          },
         );
-
-        const authUserId = result.user?.id ?? result.session?.user.id;
-
-        if (!authUserId) {
-          throw new Error('Nao foi possivel identificar o usuario criado no Supabase.');
-        }
-
-        await this.authService.registerProfessorProfile({
-          authUserId,
-          nome: form.controls.nome.value.trim(),
-          sobrenome: form.controls.sobrenome.value.trim(),
-          cpf: form.controls.cpf.value.trim(),
-          dataNascimento: form.controls.dataNascimento.value,
-        });
 
         if (result.session) {
           await this.authService.refreshSession();
@@ -207,20 +200,13 @@ export class LoginPageComponent implements OnInit {
       const result = await this.authService.signUp(
         form.controls.email.value.trim(),
         form.controls.password.value,
+        {
+          profile_type: 'aluno',
+          nome: form.controls.nome.value.trim(),
+          sobrenome: form.controls.sobrenome.value.trim(),
+          data_nascimento: form.controls.dataNascimento.value,
+        },
       );
-
-      const authUserId = result.user?.id ?? result.session?.user.id;
-
-      if (!authUserId) {
-        throw new Error('Nao foi possivel identificar o usuario criado no Supabase.');
-      }
-
-      await this.authService.registerAlunoProfile({
-        authUserId,
-        nome: form.controls.nome.value.trim(),
-        sobrenome: form.controls.sobrenome.value.trim(),
-        dataNascimento: form.controls.dataNascimento.value,
-      });
 
       if (result.session) {
         await this.authService.refreshSession();
