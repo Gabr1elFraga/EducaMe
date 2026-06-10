@@ -89,7 +89,13 @@ export class LoginPageComponent implements OnInit {
         throw new Error('Falha ao autenticar a conta.');
       }
 
-      await this.router.navigateByUrl(this.redirectUrl);
+      const refreshedSession = await this.authService.refreshSession();
+
+      if (!refreshedSession) {
+        throw new Error('A sessão não foi mantida após o login.');
+      }
+
+      await this.router.navigateByUrl(this.redirectUrl, { replaceUrl: true });
     } catch (error) {
       console.error('Login failed', error);
       this.errorMessage = this.normalizeError(error);
@@ -119,7 +125,8 @@ export class LoginPageComponent implements OnInit {
       );
 
       if (result.session) {
-        await this.router.navigateByUrl(this.redirectUrl);
+        await this.authService.refreshSession();
+        await this.router.navigateByUrl(this.redirectUrl, { replaceUrl: true });
         return;
       }
 

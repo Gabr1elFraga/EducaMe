@@ -1,50 +1,4 @@
-<section class="auth-page">
-  <mat-card class="auth-copy app-surface">
-    <p class="eyebrow">EducaMe</p>
-    <h1>Uma experiência de ensino mais limpa, elegante e profissional.</h1>
-    <p class="lead">
-      Acesse sua conta para acompanhar aulas, alunos e pagamentos em uma
-      interface branca, leve e consistente em toda a plataforma.
-    </p>
-
-    <div class="benefits">
-      <article class="benefit-item">
-        <mat-icon class="material-symbols-rounded" aria-hidden="true">verified</mat-icon>
-        <div>
-          <strong>Acesso seguro</strong>
-          <p>Autenticação com sessão persistente e navegação protegida.</p>
-        </div>
-      </article>
-
-      <article class="benefit-item">
-        <mat-icon class="material-symbols-rounded" aria-hidden="true">calendar_month</mat-icon>
-        <div>
-          <strong>Fluxo centralizado</strong>
-          <p>Login, cadastro e painel alinhados ao mesmo padrão visual.</p>
-        </div>
-      </article>
-
-      <article class="benefit-item">
-        <mat-icon class="material-symbols-rounded" aria-hidden="true">palette</mat-icon>
-        <div>
-          <strong>Interface moderna</strong>
-          <p>Tipografia Google Fonts, azul suave e componentes Material.</p>
-        </div>
-      </article>
-    </div>
-
-    <div class="info-strip">
-      <div>
-        <span class="info-label">Ambiente</span>
-        <strong>Clareza visual para operações diárias</strong>
-      </div>
-      <div>
-        <span class="info-label">Navegação</span>
-        <strong>Sem ruído técnico na tela</strong>
-      </div>
-    </div>
-  </mat-card>
-
+<section class="auth-shell">
   <mat-card class="auth-card app-surface">
     <div class="brand-row">
       <div class="brand-badge">E</div>
@@ -55,8 +9,8 @@
     </div>
 
     <div class="card-heading">
-      <p class="eyebrow eyebrow-soft">Acesso</p>
-      <h2>Entre ou crie sua conta</h2>
+      <p class="eyebrow">Acesso</p>
+      <h1>Entre ou crie sua conta</h1>
       <p class="subtitle">
         Use o seu e-mail para acessar a área administrativa da plataforma.
       </p>
@@ -116,7 +70,8 @@
             <button
               mat-flat-button
               color="primary"
-              type="submit"
+              type="button"
+              (click)="submit($event)"
               [disabled]="loading || signingUp"
             >
               <mat-icon class="material-symbols-rounded" aria-hidden="true">login</mat-icon>
@@ -185,7 +140,8 @@
             <button
               mat-flat-button
               color="primary"
-              type="submit"
+              type="button"
+              (click)="signUp($event)"
               [disabled]="loading || signingUp"
             >
               <mat-icon class="material-symbols-rounded" aria-hidden="true">badge</mat-icon>
@@ -206,10 +162,5 @@
         </form>
       </mat-tab>
     </mat-tab-group>
-
-    <div class="footer-note">
-      <mat-icon class="material-symbols-rounded" aria-hidden="true">shield</mat-icon>
-      <span>Ao autenticar, você será redirecionado para o painel principal.</span>
-    </div>
   </mat-card>
 </section>

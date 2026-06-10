@@ -112,6 +112,17 @@ export class AuthService {
     this.sessionSubject.next(null);
   }
 
+  async refreshSession(): Promise<Session | null> {
+    const { data, error } = await this.client.auth.getSession();
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    this.sessionSubject.next(data.session);
+    return data.session;
+  }
+
   async loadSession(): Promise<void> {
     const { data, error } = await this.client.auth.getSession();
 
