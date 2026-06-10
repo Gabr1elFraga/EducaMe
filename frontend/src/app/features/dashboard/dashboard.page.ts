@@ -1,5 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { StatCardComponent } from '../../shared/components/stat-card/stat-card.component';
 import { DashboardSummary } from './models/dashboard-summary.model';
 import { DashboardService } from './services/dashboard.service';
@@ -7,7 +13,16 @@ import { DashboardService } from './services/dashboard.service';
 @Component({
   selector: 'app-dashboard-page',
   standalone: true,
-  imports: [CommonModule, StatCardComponent],
+  imports: [
+    CommonModule,
+    MatButtonModule,
+    MatCardModule,
+    MatChipsModule,
+    MatDividerModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    StatCardComponent,
+  ],
   templateUrl: './dashboard.page.html',
   styleUrl: './dashboard.page.css',
 })
@@ -36,6 +51,6 @@ export class DashboardPageComponent implements OnInit {
       return error.message;
     }
 
-    return 'Nao foi possivel carregar o dashboard.';
+    return 'Não foi possível carregar o dashboard.';
   }
 }

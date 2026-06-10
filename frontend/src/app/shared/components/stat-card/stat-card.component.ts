@@ -1,59 +1,79 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-stat-card',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatCardModule],
   template: `
-    <article class="stat-card" [attr.data-tone]="tone">
+    <mat-card class="stat-card" [attr.data-tone]="tone">
       <span class="label">{{ label }}</span>
       <strong>{{ value }}</strong>
       <small>{{ description }}</small>
-    </article>
+    </mat-card>
   `,
   styles: [
     `
+      :host {
+        display: block;
+      }
+
       .stat-card {
-        min-height: 150px;
+        position: relative;
+        overflow: hidden;
+        min-height: 154px;
         padding: 18px;
         border-radius: 24px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+        gap: 12px;
+        border: 1px solid var(--line);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 251, 255, 0.98));
+        box-shadow: var(--shadow-soft);
+      }
+
+      .stat-card::after {
+        content: '';
+        position: absolute;
+        inset: auto 0 0 0;
+        height: 4px;
+        background: var(--tone, var(--primary));
       }
 
       .label {
         color: var(--muted);
-        font: 700 0.78rem/1 "Trebuchet MS", "Segoe UI", sans-serif;
+        font: 700 0.74rem/1 'Plus Jakarta Sans', sans-serif;
         letter-spacing: 0.14em;
         text-transform: uppercase;
       }
 
       strong {
-        font: 700 clamp(1.9rem, 3vw, 3rem) / 1 "Trebuchet MS", "Segoe UI", sans-serif;
+        color: var(--text);
+        font: 800 clamp(1.8rem, 3vw, 2.8rem) / 1 'Plus Jakarta Sans', sans-serif;
+        letter-spacing: -0.04em;
       }
 
       small {
         color: var(--muted);
+        line-height: 1.55;
       }
 
       .stat-card[data-tone='gold'] {
-        border-color: rgba(243, 191, 104, 0.25);
+        --tone: #f59e0b;
       }
 
       .stat-card[data-tone='blue'] {
-        border-color: rgba(106, 212, 255, 0.25);
+        --tone: #2563eb;
       }
 
       .stat-card[data-tone='orange'] {
-        border-color: rgba(255, 145, 99, 0.22);
+        --tone: #ea580c;
       }
 
       .stat-card[data-tone='green'] {
-        border-color: rgba(100, 216, 154, 0.25);
+        --tone: #16a34a;
       }
     `,
   ],
