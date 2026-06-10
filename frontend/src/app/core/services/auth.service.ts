@@ -1,3 +1,4 @@
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {
   AuthChangeEvent,
@@ -6,7 +7,7 @@ import {
   User,
   createClient,
 } from '@supabase/supabase-js';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { SUPABASE_CONFIG } from '../config/supabase.config';
 
 @Injectable({
@@ -20,7 +21,7 @@ export class AuthService {
 
   readonly session$ = this.sessionSubject.asObservable();
 
-  constructor() {
+  constructor(private readonly http: HttpClient) {
     this.client = createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey, {
       auth: {
         autoRefreshToken: true,
@@ -123,6 +124,25 @@ export class AuthService {
     return data.session;
   }
 
+  async registerAlunoProfile(payload: {
+    authUserId: string;
+    nome: string;
+    sobrenome: string;
+    dataNascimento: string;
+  }): Promise<void> {
+    await this.postProfile('/v1/autenticacao/alunos', payload);
+  }
+
+  async registerProfessorProfile(payload: {
+    authUserId: string;
+    nome: string;
+    sobrenome: string;
+    cpf: string;
+    dataNascimento: string;
+  }): Promise<void> {
+    await this.postProfile('/v1/autenticacao/professores', payload);
+  }
+
   async loadSession(): Promise<void> {
     const { data, error } = await this.client.auth.getSession();
 
@@ -136,5 +156,36 @@ export class AuthService {
     if (data.session || this.sessionSubject.value === undefined || this.sessionSubject.value === null) {
       this.sessionSubject.next(data.session);
     }
+  }
+
+  private async postProfile<T>(url: string, payload: T): Promise<void> {
+    try {
+      await firstValueFrom(this.http.post(url, payload));
+    } catch (error) {
+      throw new Error(this.extractHttpErrorMessage(error));
+    }
+  }
+
+  private extractHttpErrorMessage(error: unknown): string {
+    if (error instanceof HttpErrorResponse) {
+      const detail = error.error?.detail ?? error.error?.message;
+      if (typeof detail === 'string' && detail.trim()) {
+        return detail;
+      }
+
+      if (typeof error.error === 'string' && error.error.trim()) {
+        return error.error;
+      }
+
+      if (error.message) {
+        return error.message;
+      }
+    }
+
+    if (error instanceof Error && error.message.trim()) {
+      return error.message;
+    }
+
+    return 'Nao foi possivel concluir o cadastro do perfil.';
   }
 }

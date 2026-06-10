@@ -6,161 +6,368 @@
         <div class="brand-name">EducaMe</div>
         <div class="brand-subtitle">Plataforma de ensino</div>
       </div>
+
+      <button
+        *ngIf="selectedActor"
+        mat-stroked-button
+        color="primary"
+        type="button"
+        class="reset-button"
+        (click)="resetActor()"
+      >
+        <mat-icon class="material-symbols-rounded" aria-hidden="true">swap_horiz</mat-icon>
+        <span>Trocar perfil</span>
+      </button>
     </div>
 
-    <div class="card-heading">
-      <p class="eyebrow">Acesso</p>
-      <h1>Entre ou crie sua conta</h1>
-      <p class="subtitle">
-        Use o seu e-mail para acessar a área administrativa da plataforma.
-      </p>
+    <div class="hero" *ngIf="!selectedActor">
+      <div class="hero-copy">
+        <p class="eyebrow">Acesso seguro</p>
+        <h1>Escolha primeiro se voce entra como aluno ou professor.</h1>
+        <p class="subtitle">
+          O login continua com e-mail e senha. No cadastro, cada perfil recebe
+          os campos que realmente precisa e ja fica ligado ao seu usuario no
+          Supabase Auth.
+        </p>
+      </div>
+
+      <div class="role-grid">
+        <button class="role-card" type="button" (click)="selectActor('aluno')">
+          <span class="role-icon">
+            <mat-icon class="material-symbols-rounded" aria-hidden="true">person</mat-icon>
+          </span>
+          <strong>Aluno</strong>
+          <span>Entrar ou criar conta com nome, sobrenome e data de nascimento.</span>
+        </button>
+
+        <button class="role-card" type="button" (click)="selectActor('professor')">
+          <span class="role-icon">
+            <mat-icon class="material-symbols-rounded" aria-hidden="true">school</mat-icon>
+          </span>
+          <strong>Professor</strong>
+          <span>
+            Entrar ou criar conta com nome, sobrenome, CPF e data de nascimento.
+          </span>
+        </button>
+      </div>
     </div>
 
-    <mat-tab-group
-      [(selectedIndex)]="activeTabIndex"
-      animationDuration="200ms"
-      class="auth-tabs"
-      (selectedTabChange)="clearFeedback()"
-    >
-      <mat-tab label="Entrar">
-        <form class="auth-form" novalidate (ngSubmit)="submit($event)">
-          <mat-form-field appearance="outline">
-            <mat-label>E-mail</mat-label>
-            <input
-              matInput
-              type="email"
-              [formControl]="emailControl"
-              placeholder="voce@educame.com"
-              autocomplete="email"
-            />
-            <mat-error *ngIf="emailControl.touched && emailControl.hasError('required')">
-              Informe seu e-mail.
-            </mat-error>
-            <mat-error *ngIf="emailControl.touched && emailControl.hasError('email')">
-              Informe um e-mail válido.
-            </mat-error>
-          </mat-form-field>
+    <ng-container *ngIf="selectedActor">
+      <div class="selected-banner">
+        <mat-icon class="material-symbols-rounded" aria-hidden="true">{{ selectedActorIcon }}</mat-icon>
+        <div>
+          <strong>{{ selectedActorLabel }}</strong>
+          <p>{{ selectedActorDescription }}</p>
+        </div>
+      </div>
 
-          <mat-form-field appearance="outline">
-            <mat-label>Senha</mat-label>
-            <input
-              matInput
-              type="password"
-              [formControl]="passwordControl"
-              placeholder="••••••••"
-              autocomplete="current-password"
-            />
-            <mat-error *ngIf="passwordControl.touched && passwordControl.hasError('required')">
-              Informe sua senha.
-            </mat-error>
-            <mat-error *ngIf="passwordControl.touched && passwordControl.hasError('minlength')">
-              A senha precisa ter pelo menos 6 caracteres.
-            </mat-error>
-          </mat-form-field>
+      <mat-tab-group
+        [(selectedIndex)]="activeTabIndex"
+        animationDuration="200ms"
+        class="auth-tabs"
+        (selectedTabChange)="clearFeedback()"
+      >
+        <mat-tab label="Entrar">
+          <form class="auth-form" novalidate [formGroup]="loginForm" (ngSubmit)="submit($event)">
+            <mat-form-field appearance="outline">
+              <mat-label>E-mail</mat-label>
+              <input
+                matInput
+                type="email"
+                formControlName="email"
+                placeholder="voce@educame.com"
+                autocomplete="email"
+              />
+              <mat-error *ngIf="loginForm.controls.email.touched && loginForm.controls.email.hasError('required')">
+                Informe seu e-mail.
+              </mat-error>
+              <mat-error *ngIf="loginForm.controls.email.touched && loginForm.controls.email.hasError('email')">
+                Informe um e-mail valido.
+              </mat-error>
+            </mat-form-field>
 
-          <div class="feedback error" *ngIf="errorMessage">
-            {{ errorMessage }}
-          </div>
+            <mat-form-field appearance="outline">
+              <mat-label>Senha</mat-label>
+              <input
+                matInput
+                type="password"
+                formControlName="password"
+                placeholder="••••••••"
+                autocomplete="current-password"
+              />
+              <mat-error *ngIf="loginForm.controls.password.touched && loginForm.controls.password.hasError('required')">
+                Informe sua senha.
+              </mat-error>
+              <mat-error *ngIf="loginForm.controls.password.touched && loginForm.controls.password.hasError('minlength')">
+                A senha precisa ter pelo menos 6 caracteres.
+              </mat-error>
+            </mat-form-field>
 
-          <div class="feedback success" *ngIf="successMessage">
-            {{ successMessage }}
-          </div>
+            <div class="feedback error" *ngIf="errorMessage">
+              {{ errorMessage }}
+            </div>
 
-          <div class="action-row">
-            <button
-              mat-flat-button
-              color="primary"
-              type="button"
-              (click)="submit($event)"
-              [disabled]="loading || signingUp"
+            <div class="feedback success" *ngIf="successMessage">
+              {{ successMessage }}
+            </div>
+
+            <div class="action-row">
+              <button
+                mat-flat-button
+                color="primary"
+                type="submit"
+                [disabled]="loading || registering"
+              >
+                <mat-icon class="material-symbols-rounded" aria-hidden="true">login</mat-icon>
+                <span>{{ loading ? 'Entrando...' : 'Entrar' }}</span>
+              </button>
+
+              <button
+                mat-stroked-button
+                color="primary"
+                type="button"
+                [disabled]="loading || registering"
+                (click)="openRegisterTab()"
+              >
+                <mat-icon class="material-symbols-rounded" aria-hidden="true">person_add</mat-icon>
+                <span>Criar conta</span>
+              </button>
+            </div>
+          </form>
+        </mat-tab>
+
+        <mat-tab label="Cadastro">
+          <ng-container *ngIf="selectedActor === 'aluno'">
+            <form
+              class="auth-form"
+              novalidate
+              [formGroup]="alunoRegisterForm"
+              (ngSubmit)="register($event)"
             >
-              <mat-icon class="material-symbols-rounded" aria-hidden="true">login</mat-icon>
-              <span>{{ loading ? 'Entrando...' : 'Entrar' }}</span>
-            </button>
+              <mat-form-field appearance="outline">
+                <mat-label>Nome</mat-label>
+                <input matInput type="text" formControlName="nome" autocomplete="given-name" />
+                <mat-error *ngIf="alunoRegisterForm.controls.nome.touched && alunoRegisterForm.controls.nome.hasError('required')">
+                  Informe o nome.
+                </mat-error>
+              </mat-form-field>
 
-            <button
-              mat-stroked-button
-              color="primary"
-              type="button"
-              [disabled]="loading || signingUp"
-              (click)="openRegisterTab()"
+              <mat-form-field appearance="outline">
+                <mat-label>Sobrenome</mat-label>
+                <input
+                  matInput
+                  type="text"
+                  formControlName="sobrenome"
+                  autocomplete="family-name"
+                />
+                <mat-error *ngIf="alunoRegisterForm.controls.sobrenome.touched && alunoRegisterForm.controls.sobrenome.hasError('required')">
+                  Informe o sobrenome.
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Data de nascimento</mat-label>
+                <input
+                  matInput
+                  type="date"
+                  formControlName="dataNascimento"
+                  autocomplete="bday"
+                />
+                <mat-error *ngIf="alunoRegisterForm.controls.dataNascimento.touched && alunoRegisterForm.controls.dataNascimento.hasError('required')">
+                  Informe a data de nascimento.
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>E-mail</mat-label>
+                <input
+                  matInput
+                  type="email"
+                  formControlName="email"
+                  placeholder="voce@educame.com"
+                  autocomplete="email"
+                />
+                <mat-error *ngIf="alunoRegisterForm.controls.email.touched && alunoRegisterForm.controls.email.hasError('required')">
+                  Informe seu e-mail.
+                </mat-error>
+                <mat-error *ngIf="alunoRegisterForm.controls.email.touched && alunoRegisterForm.controls.email.hasError('email')">
+                  Informe um e-mail valido.
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Senha</mat-label>
+                <input
+                  matInput
+                  type="password"
+                  formControlName="password"
+                  placeholder="••••••••"
+                  autocomplete="new-password"
+                />
+                <mat-error *ngIf="alunoRegisterForm.controls.password.touched && alunoRegisterForm.controls.password.hasError('required')">
+                  Informe sua senha.
+                </mat-error>
+                <mat-error *ngIf="alunoRegisterForm.controls.password.touched && alunoRegisterForm.controls.password.hasError('minlength')">
+                  A senha precisa ter pelo menos 6 caracteres.
+                </mat-error>
+              </mat-form-field>
+
+              <div class="feedback error" *ngIf="errorMessage">
+                {{ errorMessage }}
+              </div>
+
+              <div class="feedback success" *ngIf="successMessage">
+                {{ successMessage }}
+              </div>
+
+              <div class="action-row">
+                <button
+                  mat-flat-button
+                  color="primary"
+                  type="submit"
+                  [disabled]="loading || registering"
+                >
+                  <mat-icon class="material-symbols-rounded" aria-hidden="true">badge</mat-icon>
+                  <span>{{ registering ? 'Criando...' : registerButtonLabel }}</span>
+                </button>
+
+                <button
+                  mat-stroked-button
+                  color="primary"
+                  type="button"
+                  [disabled]="loading || registering"
+                  (click)="openLoginTab()"
+                >
+                  <mat-icon class="material-symbols-rounded" aria-hidden="true">arrow_back</mat-icon>
+                  <span>Voltar para login</span>
+                </button>
+              </div>
+            </form>
+          </ng-container>
+
+          <ng-container *ngIf="selectedActor === 'professor'">
+            <form
+              class="auth-form"
+              novalidate
+              [formGroup]="professorRegisterForm"
+              (ngSubmit)="register($event)"
             >
-              <mat-icon class="material-symbols-rounded" aria-hidden="true">person_add</mat-icon>
-              <span>Criar conta</span>
-            </button>
-          </div>
-        </form>
-      </mat-tab>
+              <mat-form-field appearance="outline">
+                <mat-label>Nome</mat-label>
+                <input matInput type="text" formControlName="nome" autocomplete="given-name" />
+                <mat-error *ngIf="professorRegisterForm.controls.nome.touched && professorRegisterForm.controls.nome.hasError('required')">
+                  Informe o nome.
+                </mat-error>
+              </mat-form-field>
 
-      <mat-tab label="Cadastro">
-        <form class="auth-form" novalidate (ngSubmit)="signUp($event)">
-          <mat-form-field appearance="outline">
-            <mat-label>E-mail</mat-label>
-            <input
-              matInput
-              type="email"
-              [formControl]="emailControl"
-              placeholder="voce@educame.com"
-              autocomplete="email"
-            />
-            <mat-error *ngIf="emailControl.touched && emailControl.hasError('required')">
-              Informe seu e-mail.
-            </mat-error>
-            <mat-error *ngIf="emailControl.touched && emailControl.hasError('email')">
-              Informe um e-mail válido.
-            </mat-error>
-          </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Sobrenome</mat-label>
+                <input
+                  matInput
+                  type="text"
+                  formControlName="sobrenome"
+                  autocomplete="family-name"
+                />
+                <mat-error *ngIf="professorRegisterForm.controls.sobrenome.touched && professorRegisterForm.controls.sobrenome.hasError('required')">
+                  Informe o sobrenome.
+                </mat-error>
+              </mat-form-field>
 
-          <mat-form-field appearance="outline">
-            <mat-label>Senha</mat-label>
-            <input
-              matInput
-              type="password"
-              [formControl]="passwordControl"
-              placeholder="••••••••"
-              autocomplete="new-password"
-            />
-            <mat-error *ngIf="passwordControl.touched && passwordControl.hasError('required')">
-              Informe sua senha.
-            </mat-error>
-            <mat-error *ngIf="passwordControl.touched && passwordControl.hasError('minlength')">
-              A senha precisa ter pelo menos 6 caracteres.
-            </mat-error>
-          </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>CPF</mat-label>
+                <input
+                  matInput
+                  type="text"
+                  formControlName="cpf"
+                  placeholder="000.000.000-00"
+                  autocomplete="off"
+                />
+                <mat-error *ngIf="professorRegisterForm.controls.cpf.touched && professorRegisterForm.controls.cpf.hasError('required')">
+                  Informe o CPF.
+                </mat-error>
+              </mat-form-field>
 
-          <div class="feedback error" *ngIf="errorMessage">
-            {{ errorMessage }}
-          </div>
+              <mat-form-field appearance="outline">
+                <mat-label>Data de nascimento</mat-label>
+                <input
+                  matInput
+                  type="date"
+                  formControlName="dataNascimento"
+                  autocomplete="bday"
+                />
+                <mat-error *ngIf="professorRegisterForm.controls.dataNascimento.touched && professorRegisterForm.controls.dataNascimento.hasError('required')">
+                  Informe a data de nascimento.
+                </mat-error>
+              </mat-form-field>
 
-          <div class="feedback success" *ngIf="successMessage">
-            {{ successMessage }}
-          </div>
+              <mat-form-field appearance="outline">
+                <mat-label>E-mail</mat-label>
+                <input
+                  matInput
+                  type="email"
+                  formControlName="email"
+                  placeholder="voce@educame.com"
+                  autocomplete="email"
+                />
+                <mat-error *ngIf="professorRegisterForm.controls.email.touched && professorRegisterForm.controls.email.hasError('required')">
+                  Informe seu e-mail.
+                </mat-error>
+                <mat-error *ngIf="professorRegisterForm.controls.email.touched && professorRegisterForm.controls.email.hasError('email')">
+                  Informe um e-mail valido.
+                </mat-error>
+              </mat-form-field>
 
-          <div class="action-row">
-            <button
-              mat-flat-button
-              color="primary"
-              type="button"
-              (click)="signUp($event)"
-              [disabled]="loading || signingUp"
-            >
-              <mat-icon class="material-symbols-rounded" aria-hidden="true">badge</mat-icon>
-              <span>{{ signingUp ? 'Criando...' : 'Criar conta' }}</span>
-            </button>
+              <mat-form-field appearance="outline">
+                <mat-label>Senha</mat-label>
+                <input
+                  matInput
+                  type="password"
+                  formControlName="password"
+                  placeholder="••••••••"
+                  autocomplete="new-password"
+                />
+                <mat-error *ngIf="professorRegisterForm.controls.password.touched && professorRegisterForm.controls.password.hasError('required')">
+                  Informe sua senha.
+                </mat-error>
+                <mat-error *ngIf="professorRegisterForm.controls.password.touched && professorRegisterForm.controls.password.hasError('minlength')">
+                  A senha precisa ter pelo menos 6 caracteres.
+                </mat-error>
+              </mat-form-field>
 
-            <button
-              mat-stroked-button
-              color="primary"
-              type="button"
-              [disabled]="loading || signingUp"
-              (click)="openLoginTab()"
-            >
-              <mat-icon class="material-symbols-rounded" aria-hidden="true">arrow_back</mat-icon>
-              <span>Voltar para login</span>
-            </button>
-          </div>
-        </form>
-      </mat-tab>
-    </mat-tab-group>
+              <div class="feedback error" *ngIf="errorMessage">
+                {{ errorMessage }}
+              </div>
+
+              <div class="feedback success" *ngIf="successMessage">
+                {{ successMessage }}
+              </div>
+
+              <div class="action-row">
+                <button
+                  mat-flat-button
+                  color="primary"
+                  type="submit"
+                  [disabled]="loading || registering"
+                >
+                  <mat-icon class="material-symbols-rounded" aria-hidden="true">badge</mat-icon>
+                  <span>{{ registering ? 'Criando...' : registerButtonLabel }}</span>
+                </button>
+
+                <button
+                  mat-stroked-button
+                  color="primary"
+                  type="button"
+                  [disabled]="loading || registering"
+                  (click)="openLoginTab()"
+                >
+                  <mat-icon class="material-symbols-rounded" aria-hidden="true">arrow_back</mat-icon>
+                  <span>Voltar para login</span>
+                </button>
+              </div>
+            </form>
+          </ng-container>
+        </mat-tab>
+      </mat-tab-group>
+    </ng-container>
   </mat-card>
 </section>
