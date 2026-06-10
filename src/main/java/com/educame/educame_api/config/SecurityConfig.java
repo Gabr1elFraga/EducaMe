@@ -24,7 +24,7 @@ public class SecurityConfig {
 			.httpBasic(AbstractHttpConfigurer::disable)
 			.formLogin(AbstractHttpConfigurer::disable)
 			.authorizeHttpRequests(auth -> auth
-				.requestMatchers("/actuator/health", "/error").permitAll()
+				.requestMatchers("/actuator/health", "/error", "/api/v1/autenticacao/**").permitAll()
 				.anyRequest().authenticated()
 			)
 			.oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
