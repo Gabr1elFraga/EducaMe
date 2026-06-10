@@ -6,6 +6,7 @@ import com.educame.educame_api.domain.avaliacao.Avaliacao;
 import com.educame.educame_api.domain.disciplina.Disciplina;
 import com.educame.educame_api.domain.disponibilidade.Disponibilidade;
 import com.educame.educame_api.application.dto.aluno.AlunoResponse;
+import com.educame.educame_api.application.dto.professor.ProfessorResponse;
 import com.educame.educame_api.domain.endereco.Endereco;
 import com.educame.educame_api.domain.enums.AulaStatus;
 import com.educame.educame_api.domain.enums.DisponibilidadeStatus;
@@ -146,6 +147,32 @@ public final class DomainEntityMapper {
 		entity.setEndereco(toEntity(domain.getEndereco()));
 		entity.setAtivo(domain.isAtivo());
 		return entity;
+	}
+
+	public static ProfessorResponse toResponse(Professor domain) {
+		if (domain == null) {
+			return null;
+		}
+		var endereco = domain.getEndereco();
+		return new ProfessorResponse(
+			domain.getId(),
+			domain.getAuthUserId(),
+			domain.getNome(),
+			domain.getSobrenome(),
+			domain.getBio(),
+			endereco == null ? null : new ProfessorResponse.EnderecoResponse(
+				endereco.getId(),
+				endereco.getRua(),
+				endereco.getNumero(),
+				endereco.getComplemento(),
+				endereco.getBairro(),
+				endereco.getCidade(),
+				endereco.getEstado(),
+				endereco.getCep(),
+				endereco.getPais()
+			),
+			domain.isAtivo()
+		);
 	}
 
 	public static Disciplina toDomain(DisciplinaEntity entity) {
