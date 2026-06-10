@@ -6,8 +6,7 @@ import com.educame.educame_api.application.dto.autenticacao.CadastroProfessorReq
 import com.educame.educame_api.application.dto.professor.ProfessorResponse;
 import com.educame.educame_api.application.mapper.DomainEntityMapper;
 import com.educame.educame_api.domain.aluno.Aluno;
-import com.educame.educame_api.domain.contract.AlunoRepository;
-import com.educame.educame_api.domain.contract.ProfessorRepository;
+import com.educame.educame_api.domain.contract.ProfileCadastroRepository;
 import com.educame.educame_api.domain.enums.GeneroTipo;
 import com.educame.educame_api.domain.professor.Professor;
 import org.springframework.http.HttpStatus;
@@ -20,22 +19,20 @@ import java.util.UUID;
 
 @Service
 public class AutenticacaoUseCase {
-	private final AlunoRepository alunoRepository;
-	private final ProfessorRepository professorRepository;
+	private final ProfileCadastroRepository profileCadastroRepository;
 
-	public AutenticacaoUseCase(AlunoRepository alunoRepository, ProfessorRepository professorRepository) {
-		this.alunoRepository = alunoRepository;
-		this.professorRepository = professorRepository;
+	public AutenticacaoUseCase(ProfileCadastroRepository profileCadastroRepository) {
+		this.profileCadastroRepository = profileCadastroRepository;
 	}
 
 	public AlunoResponse cadastrarAluno(CadastroAlunoRequest request) {
 		var authUserId = requireAuthUserId(request.authUserId());
 
-		professorRepository.findByAuthUserId(authUserId).ifPresent(existing -> {
+		profileCadastroRepository.findProfessorByAuthUserId(authUserId).ifPresent(existing -> {
 			throw new ResponseStatusException(HttpStatus.CONFLICT, "Este usuario ja esta cadastrado como professor.");
 		});
 
-		var aluno = alunoRepository.findByAuthUserId(authUserId).orElseGet(Aluno::new);
+		var aluno = profileCadastroRepository.findAlunoByAuthUserId(authUserId).orElseGet(Aluno::new);
 		aluno.setAuthUserId(authUserId);
 		aluno.setNome(request.nome().trim());
 		aluno.setSobrenome(request.sobrenome().trim());
@@ -44,19 +41,19 @@ public class AutenticacaoUseCase {
 			aluno.setGenero(GeneroTipo.NAO_INFORMADO);
 		}
 
-		return DomainEntityMapper.toResponse(alunoRepository.save(aluno));
+		return DomainEntityMapper.toResponse(profileCadastroRepository.saveAluno(aluno));
 	}
 
 	public ProfessorResponse cadastrarProfessor(CadastroProfessorRequest request) {
 		var authUserId = requireAuthUserId(request.authUserId());
 
-		alunoRepository.findByAuthUserId(authUserId).ifPresent(existing -> {
+		profileCadastroRepository.findAlunoByAuthUserId(authUserId).ifPresent(existing -> {
 			throw new ResponseStatusException(HttpStatus.CONFLICT, "Este usuario ja esta cadastrado como aluno.");
 		});
 
 		validateAdult(request.dataNascimento());
 
-		var professor = professorRepository.findByAuthUserId(authUserId).orElseGet(Professor::new);
+		var professor = profileCadastroRepository.findProfessorByAuthUserId(authUserId).orElseGet(Professor::new);
 		professor.setAuthUserId(authUserId);
 		professor.setNome(request.nome().trim());
 		professor.setSobrenome(request.sobrenome().trim());
@@ -64,7 +61,7 @@ public class AutenticacaoUseCase {
 		professor.setDataNascimento(request.dataNascimento());
 		professor.setAtivo(true);
 
-		return DomainEntityMapper.toResponse(professorRepository.save(professor));
+		return DomainEntityMapper.toResponse(profileCadastroRepository.saveProfessor(professor));
 	}
 
 	private UUID requireAuthUserId(UUID authUserId) {

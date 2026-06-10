@@ -3,8 +3,7 @@ package com.educame.educame_api.application.usecase.autenticacao;
 import com.educame.educame_api.application.dto.autenticacao.CadastroAlunoRequest;
 import com.educame.educame_api.application.dto.autenticacao.CadastroProfessorRequest;
 import com.educame.educame_api.domain.aluno.Aluno;
-import com.educame.educame_api.domain.contract.AlunoRepository;
-import com.educame.educame_api.domain.contract.ProfessorRepository;
+import com.educame.educame_api.domain.contract.ProfileCadastroRepository;
 import com.educame.educame_api.domain.enums.GeneroTipo;
 import com.educame.educame_api.domain.professor.Professor;
 import org.junit.jupiter.api.Test;
@@ -28,10 +27,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class AutenticacaoUseCaseTest {
 	@Mock
-	private AlunoRepository alunoRepository;
-
-	@Mock
-	private ProfessorRepository professorRepository;
+	private ProfileCadastroRepository profileCadastroRepository;
 
 	@InjectMocks
 	private AutenticacaoUseCase autenticacaoUseCase;
@@ -46,9 +42,9 @@ class AutenticacaoUseCaseTest {
 			LocalDate.now().minusYears(17)
 		);
 
-		when(alunoRepository.findByAuthUserId(authUserId)).thenReturn(Optional.empty());
-		when(professorRepository.findByAuthUserId(authUserId)).thenReturn(Optional.empty());
-		when(alunoRepository.save(any(Aluno.class))).thenAnswer(invocation -> invocation.getArgument(0));
+		when(profileCadastroRepository.findAlunoByAuthUserId(authUserId)).thenReturn(Optional.empty());
+		when(profileCadastroRepository.findProfessorByAuthUserId(authUserId)).thenReturn(Optional.empty());
+		when(profileCadastroRepository.saveAluno(any(Aluno.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
 		var response = autenticacaoUseCase.cadastrarAluno(request);
 
@@ -57,7 +53,7 @@ class AutenticacaoUseCaseTest {
 		assertThat(response.sobrenome()).isEqualTo("Silva");
 
 		var captor = ArgumentCaptor.forClass(Aluno.class);
-		verify(alunoRepository).save(captor.capture());
+		verify(profileCadastroRepository).saveAluno(captor.capture());
 		assertThat(captor.getValue().getAuthUserId()).isEqualTo(authUserId);
 		assertThat(captor.getValue().getGenero()).isEqualTo(GeneroTipo.NAO_INFORMADO);
 	}
@@ -73,9 +69,9 @@ class AutenticacaoUseCaseTest {
 			LocalDate.now().minusYears(22)
 		);
 
-		when(alunoRepository.findByAuthUserId(authUserId)).thenReturn(Optional.empty());
-		when(professorRepository.findByAuthUserId(authUserId)).thenReturn(Optional.empty());
-		when(professorRepository.save(any(Professor.class))).thenAnswer(invocation -> invocation.getArgument(0));
+		when(profileCadastroRepository.findAlunoByAuthUserId(authUserId)).thenReturn(Optional.empty());
+		when(profileCadastroRepository.findProfessorByAuthUserId(authUserId)).thenReturn(Optional.empty());
+		when(profileCadastroRepository.saveProfessor(any(Professor.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
 		var response = autenticacaoUseCase.cadastrarProfessor(request);
 
@@ -84,7 +80,7 @@ class AutenticacaoUseCaseTest {
 		assertThat(response.cpf()).isEqualTo("12345678910");
 
 		var captor = ArgumentCaptor.forClass(Professor.class);
-		verify(professorRepository).save(captor.capture());
+		verify(profileCadastroRepository).saveProfessor(captor.capture());
 		assertThat(captor.getValue().getAuthUserId()).isEqualTo(authUserId);
 		assertThat(captor.getValue().getCpf()).isEqualTo("12345678910");
 	}
@@ -100,7 +96,7 @@ class AutenticacaoUseCaseTest {
 			LocalDate.now().minusYears(17)
 		);
 
-		when(alunoRepository.findByAuthUserId(authUserId)).thenReturn(Optional.empty());
+		when(profileCadastroRepository.findAlunoByAuthUserId(authUserId)).thenReturn(Optional.empty());
 
 		var exception = assertThrows(ResponseStatusException.class, () -> autenticacaoUseCase.cadastrarProfessor(request));
 
