@@ -48,6 +48,19 @@ public class AlunoJdbcRepository implements AlunoRepository {
 	}
 
 	@Override
+	public Optional<Aluno> findByAuthUserId(UUID authUserId) {
+		try {
+			return Optional.ofNullable(jdbcTemplate.queryForObject("""
+				select id, auth_user_id, nome, sobrenome, data_nascimento, genero, endereco_id
+				from alunos
+				where auth_user_id = :authUserId
+				""", new MapSqlParameterSource("authUserId", authUserId), alunoRowMapper()));
+		} catch (EmptyResultDataAccessException ex) {
+			return Optional.empty();
+		}
+	}
+
+	@Override
 	public Aluno save(Aluno aluno) {
 		var id = aluno.getId() != null ? aluno.getId() : UUID.randomUUID();
 		var params = new MapSqlParameterSource()

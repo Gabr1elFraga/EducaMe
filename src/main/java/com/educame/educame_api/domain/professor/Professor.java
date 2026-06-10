@@ -2,6 +2,7 @@ package com.educame.educame_api.domain.professor;
 
 import com.educame.educame_api.domain.endereco.Endereco;
 
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -10,6 +11,8 @@ public class Professor {
 	private UUID authUserId;
 	private String nome;
 	private String sobrenome;
+	private String cpf;
+	private LocalDate dataNascimento;
 	private String bio;
 	private Endereco endereco;
 	private boolean ativo;
@@ -17,11 +20,13 @@ public class Professor {
 	public Professor() {
 	}
 
-	public Professor(UUID id, UUID authUserId, String nome, String sobrenome, String bio, Endereco endereco, boolean ativo) {
+	public Professor(UUID id, UUID authUserId, String nome, String sobrenome, String cpf, LocalDate dataNascimento, String bio, Endereco endereco, boolean ativo) {
 		this.id = id;
 		this.authUserId = authUserId;
 		this.nome = nome;
 		this.sobrenome = sobrenome;
+		this.cpf = cpf;
+		this.dataNascimento = dataNascimento;
 		this.bio = bio;
 		this.endereco = endereco;
 		this.ativo = ativo;
@@ -35,6 +40,10 @@ public class Professor {
 	public void setNome(String nome) { this.nome = nome; }
 	public String getSobrenome() { return sobrenome; }
 	public void setSobrenome(String sobrenome) { this.sobrenome = sobrenome; }
+	public String getCpf() { return cpf; }
+	public void setCpf(String cpf) { this.cpf = cpf; }
+	public LocalDate getDataNascimento() { return dataNascimento; }
+	public void setDataNascimento(LocalDate dataNascimento) { this.dataNascimento = dataNascimento; }
 	public String getBio() { return bio; }
 	public void setBio(String bio) { this.bio = bio; }
 	public Endereco getEndereco() { return endereco; }
