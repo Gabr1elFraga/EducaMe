@@ -1,61 +1,277 @@
-<section class="auth-shell">
-  <mat-card class="auth-card app-surface">
-    <div class="brand-row">
-      <div class="brand-badge">E</div>
-      <div>
-        <div class="brand-name">EducaMe</div>
-        <div class="brand-subtitle">Plataforma de ensino</div>
-      </div>
-    </div>
+<section class="signup-page">
+  <header class="topbar">
+    <a class="brand-link" routerLink="/">
+      <span class="brand-mark" aria-hidden="true">
+        <mat-icon class="material-symbols-rounded">menu_book</mat-icon>
+      </span>
+      <span class="brand-wordmark">
+        <strong>Educa</strong><span>Me</span>
+      </span>
+    </a>
 
-    <div class="card-heading">
-      <p class="eyebrow">Acesso</p>
-      <h1>Entre ou crie sua conta</h1>
-      <p class="subtitle">
-        Use o seu e-mail para acessar a área administrativa da plataforma.
-      </p>
-    </div>
-
-    <mat-tab-group
-      [(selectedIndex)]="activeTabIndex"
-      animationDuration="200ms"
-      class="auth-tabs"
-      (selectedTabChange)="clearFeedback()"
+    <button
+      mat-button
+      type="button"
+      class="signin-link"
+      (click)="authMode === 'signup' ? openLoginTab() : openRegisterTab()"
     >
-      <mat-tab label="Entrar">
-        <form class="auth-form" novalidate (ngSubmit)="submit($event)">
+      <span>{{ authMode === 'signup' ? 'Já possui conta?' : 'Ainda não tem conta?' }}</span>
+      <strong>{{ authMode === 'signup' ? 'Entrar' : 'Criar conta' }}</strong>
+      <mat-icon class="material-symbols-rounded" aria-hidden="true">arrow_forward</mat-icon>
+    </button>
+  </header>
+
+  <main class="signup-layout">
+    <section class="signup-panel app-surface" *ngIf="authMode === 'signup'; else loginMode">
+      <div class="page-heading">
+        <p class="eyebrow">Cadastro</p>
+        <h1>Crie sua conta</h1>
+        <p>Escolha como deseja utilizar a plataforma.</p>
+      </div>
+
+      <div class="step-block">
+        <div class="step-title-row">
+          <h2>1. Escolha seu perfil</h2>
+        </div>
+
+        <div class="profile-grid">
+          <button
+            type="button"
+            class="profile-card"
+            [class.is-selected]="selectedActor === 'aluno'"
+            (click)="selectActor('aluno')"
+          >
+            <span class="profile-check" *ngIf="selectedActor === 'aluno'">
+              <mat-icon class="material-symbols-rounded" aria-hidden="true">check</mat-icon>
+            </span>
+            <span class="profile-illustration profile-illustration--student" aria-hidden="true">
+              <svg viewBox="0 0 120 120" focusable="false">
+                <circle cx="60" cy="60" r="58" class="illus-bg"></circle>
+                <path
+                  class="illus-book"
+                  d="M28 69c9-6 18-9 32-9 12 0 21 2 32 9v18c-10-6-19-9-32-9-13 0-22 3-32 9V69z"
+                ></path>
+                <path
+                  class="illus-book-top"
+                  d="M28 58c9-6 18-9 32-9 12 0 21 2 32 9-10 6-20 9-32 9-12 0-22-3-32-9z"
+                ></path>
+                <path class="illus-cap" d="M36 38l24-13 24 13-24 13-24-13z"></path>
+                <path class="illus-cap-line" d="M84 38v16"></path>
+                <circle cx="84" cy="55" r="3.5" class="illus-cap-drop"></circle>
+                <path
+                  class="illus-figure"
+                  d="M52 52c4-4 12-5 16-1 3 4 3 10 2 15l-2 9c-1 5-2 10-6 14-5 5-13 4-17-1-3-4-4-9-3-14l2-10c1-5 3-9 8-12z"
+                ></path>
+                <circle cx="62" cy="45" r="7" class="illus-head"></circle>
+                <path class="illus-shadow" d="M33 82c9-4 18-6 27-6 11 0 20 2 29 6" />
+              </svg>
+            </span>
+            <strong>Aluno</strong>
+            <p>Quero encontrar professores e agendar aulas.</p>
+            <span class="profile-action" [class.filled]="selectedActor === 'aluno'">
+              Selecionar
+            </span>
+          </button>
+
+          <button
+            type="button"
+            class="profile-card"
+            [class.is-selected]="selectedActor === 'professor'"
+            (click)="selectActor('professor')"
+          >
+            <span class="profile-check" *ngIf="selectedActor === 'professor'">
+              <mat-icon class="material-symbols-rounded" aria-hidden="true">check</mat-icon>
+            </span>
+            <span class="profile-illustration profile-illustration--teacher" aria-hidden="true">
+              <svg viewBox="0 0 120 120" focusable="false">
+                <circle cx="60" cy="60" r="58" class="illus-bg"></circle>
+                <rect x="24" y="67" width="72" height="22" rx="11" class="illus-board"></rect>
+                <path class="illus-board-line" d="M34 75h50"></path>
+                <path class="illus-board-line" d="M34 82h42"></path>
+                <path class="illus-figure" d="M54 47c5-4 13-4 17 0 3 3 4 8 4 12l-1 9c-1 5-2 11-6 15-5 5-13 4-17-1-4-4-5-10-4-15l1-10c1-4 2-7 6-10z"></path>
+                <circle cx="62" cy="41" r="7" class="illus-head"></circle>
+                <path class="illus-arm" d="M68 58l14 8"></path>
+                <path class="illus-arm" d="M54 58l-12 9"></path>
+                <path class="illus-pointer" d="M80 67l8 4"></path>
+              </svg>
+            </span>
+            <strong>Professor</strong>
+            <p>Quero oferecer aulas e gerenciar meus alunos.</p>
+            <span class="profile-action" [class.filled]="selectedActor === 'professor'">
+              Selecionar
+            </span>
+          </button>
+        </div>
+
+        <div class="step-divider">
+          <span class="step-dot">
+            <mat-icon class="material-symbols-rounded" aria-hidden="true">expand_more</mat-icon>
+          </span>
+        </div>
+      </div>
+
+      <div class="step-block">
+        <div class="step-title-row">
+          <h2>2. Preencha seus dados</h2>
+        </div>
+
+        <div class="selected-hint" *ngIf="selectedActor; else chooseProfileHint">
+          <mat-icon class="material-symbols-rounded" aria-hidden="true">{{ selectedActorIcon }}</mat-icon>
+          <div>
+            <strong>{{ selectedActorLabel }}</strong>
+            <p>{{ selectedActorDescription }}</p>
+          </div>
+        </div>
+
+        <ng-template #chooseProfileHint>
+          <div class="selected-hint muted">
+            <mat-icon class="material-symbols-rounded" aria-hidden="true">info</mat-icon>
+            <div>
+              <strong>Escolha um perfil para continuar</strong>
+              <p>Depois disso, o formulário de cadastro será exibido com os campos corretos.</p>
+            </div>
+          </div>
+        </ng-template>
+
+        <ng-container *ngIf="selectedActor">
+          <form
+            class="signup-form"
+            novalidate
+            [formGroup]="selectedActor === 'aluno' ? alunoRegisterForm : professorRegisterForm"
+            (ngSubmit)="register($event)"
+          >
+            <div class="field-grid">
+              <mat-form-field appearance="outline">
+                <mat-label>Nome</mat-label>
+                <mat-icon matPrefix class="material-symbols-rounded" aria-hidden="true">person</mat-icon>
+                <input
+                  matInput
+                  type="text"
+                  [formControl]="selectedActor === 'aluno' ? alunoRegisterForm.controls.nome : professorRegisterForm.controls.nome"
+                  autocomplete="given-name"
+                />
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Sobrenome</mat-label>
+                <mat-icon matPrefix class="material-symbols-rounded" aria-hidden="true">person</mat-icon>
+                <input
+                  matInput
+                  type="text"
+                  [formControl]="selectedActor === 'aluno' ? alunoRegisterForm.controls.sobrenome : professorRegisterForm.controls.sobrenome"
+                  autocomplete="family-name"
+                />
+              </mat-form-field>
+            </div>
+
+            <mat-form-field appearance="outline" *ngIf="selectedActor === 'professor'">
+              <mat-label>CPF</mat-label>
+              <mat-icon matPrefix class="material-symbols-rounded" aria-hidden="true">badge</mat-icon>
+              <input
+                matInput
+                type="text"
+                formControlName="cpf"
+                placeholder="000.000.000-00"
+                autocomplete="off"
+              />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Data de nascimento</mat-label>
+              <mat-icon matPrefix class="material-symbols-rounded" aria-hidden="true">calendar_month</mat-icon>
+              <input
+                matInput
+                type="date"
+                formControlName="dataNascimento"
+                autocomplete="bday"
+              />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>E-mail</mat-label>
+              <mat-icon matPrefix class="material-symbols-rounded" aria-hidden="true">mail</mat-icon>
+              <input
+                matInput
+                type="email"
+                formControlName="email"
+                placeholder="voce@educame.com"
+                autocomplete="email"
+              />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Senha</mat-label>
+              <mat-icon matPrefix class="material-symbols-rounded" aria-hidden="true">lock</mat-icon>
+              <input
+                matInput
+                type="password"
+                formControlName="password"
+                placeholder="••••••••"
+                autocomplete="new-password"
+              />
+            </mat-form-field>
+
+            <div class="feedback error" *ngIf="errorMessage">
+              {{ errorMessage }}
+            </div>
+
+            <div class="feedback success" *ngIf="successMessage">
+              {{ successMessage }}
+            </div>
+
+            <button
+              mat-flat-button
+              color="primary"
+              type="submit"
+              class="submit-button"
+              [disabled]="loading || registering"
+            >
+              <mat-icon class="material-symbols-rounded" aria-hidden="true">person_add</mat-icon>
+              <span>{{ registering ? 'Criando...' : 'Criar minha conta' }}</span>
+            </button>
+
+            <p class="terms-note">
+              Ao criar sua conta, você concorda com nossos
+              <a href="#" (click)="$event.preventDefault()">Termos de Uso</a>
+              e
+              <a href="#" (click)="$event.preventDefault()">Política de Privacidade</a>.
+            </p>
+          </form>
+        </ng-container>
+      </div>
+    </section>
+
+    <ng-template #loginMode>
+      <section class="signup-panel app-surface login-panel">
+        <div class="page-heading login-heading">
+          <p class="eyebrow">Acesso</p>
+          <h1>Entre na plataforma</h1>
+          <p>Use seu e-mail e senha para continuar.</p>
+        </div>
+
+        <form class="signup-form login-form" novalidate [formGroup]="loginForm" (ngSubmit)="submit($event)">
           <mat-form-field appearance="outline">
             <mat-label>E-mail</mat-label>
+            <mat-icon matPrefix class="material-symbols-rounded" aria-hidden="true">mail</mat-icon>
             <input
               matInput
               type="email"
-              [formControl]="emailControl"
+              formControlName="email"
               placeholder="voce@educame.com"
               autocomplete="email"
             />
-            <mat-error *ngIf="emailControl.touched && emailControl.hasError('required')">
-              Informe seu e-mail.
-            </mat-error>
-            <mat-error *ngIf="emailControl.touched && emailControl.hasError('email')">
-              Informe um e-mail válido.
-            </mat-error>
           </mat-form-field>
 
           <mat-form-field appearance="outline">
             <mat-label>Senha</mat-label>
+            <mat-icon matPrefix class="material-symbols-rounded" aria-hidden="true">lock</mat-icon>
             <input
               matInput
               type="password"
-              [formControl]="passwordControl"
+              formControlName="password"
               placeholder="••••••••"
               autocomplete="current-password"
             />
-            <mat-error *ngIf="passwordControl.touched && passwordControl.hasError('required')">
-              Informe sua senha.
-            </mat-error>
-            <mat-error *ngIf="passwordControl.touched && passwordControl.hasError('minlength')">
-              A senha precisa ter pelo menos 6 caracteres.
-            </mat-error>
           </mat-form-field>
 
           <div class="feedback error" *ngIf="errorMessage">
@@ -66,101 +282,64 @@
             {{ successMessage }}
           </div>
 
-          <div class="action-row">
-            <button
-              mat-flat-button
-              color="primary"
-              type="button"
-              (click)="submit($event)"
-              [disabled]="loading || signingUp"
-            >
-              <mat-icon class="material-symbols-rounded" aria-hidden="true">login</mat-icon>
-              <span>{{ loading ? 'Entrando...' : 'Entrar' }}</span>
-            </button>
+          <button
+            mat-flat-button
+            color="primary"
+            type="submit"
+            class="submit-button"
+            [disabled]="loading || registering"
+          >
+            <mat-icon class="material-symbols-rounded" aria-hidden="true">login</mat-icon>
+            <span>{{ loading ? 'Entrando...' : 'Entrar' }}</span>
+          </button>
 
-            <button
-              mat-stroked-button
-              color="primary"
-              type="button"
-              [disabled]="loading || signingUp"
-              (click)="openRegisterTab()"
-            >
-              <mat-icon class="material-symbols-rounded" aria-hidden="true">person_add</mat-icon>
-              <span>Criar conta</span>
-            </button>
-          </div>
+          <p class="terms-note">
+            Não tem uma conta ainda?
+            <a href="#" (click)="$event.preventDefault(); openRegisterTab()">Criar minha conta</a>
+          </p>
         </form>
-      </mat-tab>
+      </section>
+    </ng-template>
 
-      <mat-tab label="Cadastro">
-        <form class="auth-form" novalidate (ngSubmit)="signUp($event)">
-          <mat-form-field appearance="outline">
-            <mat-label>E-mail</mat-label>
-            <input
-              matInput
-              type="email"
-              [formControl]="emailControl"
-              placeholder="voce@educame.com"
-              autocomplete="email"
-            />
-            <mat-error *ngIf="emailControl.touched && emailControl.hasError('required')">
-              Informe seu e-mail.
-            </mat-error>
-            <mat-error *ngIf="emailControl.touched && emailControl.hasError('email')">
-              Informe um e-mail válido.
-            </mat-error>
-          </mat-form-field>
+    <aside class="art-panel app-surface" aria-hidden="true">
+      <img
+        class="hero-illustration"
+        src="assets/auth-hero.svg"
+        alt=""
+        role="presentation"
+      />
 
-          <mat-form-field appearance="outline">
-            <mat-label>Senha</mat-label>
-            <input
-              matInput
-              type="password"
-              [formControl]="passwordControl"
-              placeholder="••••••••"
-              autocomplete="new-password"
-            />
-            <mat-error *ngIf="passwordControl.touched && passwordControl.hasError('required')">
-              Informe sua senha.
-            </mat-error>
-            <mat-error *ngIf="passwordControl.touched && passwordControl.hasError('minlength')">
-              A senha precisa ter pelo menos 6 caracteres.
-            </mat-error>
-          </mat-form-field>
-
-          <div class="feedback error" *ngIf="errorMessage">
-            {{ errorMessage }}
+      <div class="feature-bar">
+        <div class="feature-item">
+          <span class="feature-icon">
+            <mat-icon class="material-symbols-rounded">schedule</mat-icon>
+          </span>
+          <div>
+            <strong>Aprenda no seu ritmo</strong>
+            <p>Escolha o melhor momento para estudar.</p>
           </div>
+        </div>
 
-          <div class="feedback success" *ngIf="successMessage">
-            {{ successMessage }}
+        <div class="feature-item">
+          <span class="feature-icon">
+            <mat-icon class="material-symbols-rounded">group</mat-icon>
+          </span>
+          <div>
+            <strong>Conecte-se com especialistas</strong>
+            <p>Alunos e professores em um só lugar.</p>
           </div>
+        </div>
 
-          <div class="action-row">
-            <button
-              mat-flat-button
-              color="primary"
-              type="button"
-              (click)="signUp($event)"
-              [disabled]="loading || signingUp"
-            >
-              <mat-icon class="material-symbols-rounded" aria-hidden="true">badge</mat-icon>
-              <span>{{ signingUp ? 'Criando...' : 'Criar conta' }}</span>
-            </button>
-
-            <button
-              mat-stroked-button
-              color="primary"
-              type="button"
-              [disabled]="loading || signingUp"
-              (click)="openLoginTab()"
-            >
-              <mat-icon class="material-symbols-rounded" aria-hidden="true">arrow_back</mat-icon>
-              <span>Voltar para login</span>
-            </button>
+        <div class="feature-item">
+          <span class="feature-icon">
+            <mat-icon class="material-symbols-rounded">edit</mat-icon>
+          </span>
+          <div>
+            <strong>Evolua com qualidade</strong>
+            <p>Experiência segura, simples e consistente.</p>
           </div>
-        </form>
-      </mat-tab>
-    </mat-tab-group>
-  </mat-card>
+        </div>
+      </div>
+    </aside>
+  </main>
 </section>

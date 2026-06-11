@@ -6,6 +6,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
@@ -17,6 +18,10 @@ public class ProfessorEntity extends BaseJpaEntity {
 	private String nome;
 	@Column(nullable = false)
 	private String sobrenome;
+	@Column(unique = true)
+	private String cpf;
+	@Column(name = "data_nascimento")
+	private LocalDate dataNascimento;
 	@Column(columnDefinition = "text")
 	private String bio;
 	@ManyToOne
@@ -31,6 +36,10 @@ public class ProfessorEntity extends BaseJpaEntity {
 	public void setNome(String nome) { this.nome = nome; }
 	public String getSobrenome() { return sobrenome; }
 	public void setSobrenome(String sobrenome) { this.sobrenome = sobrenome; }
+	public String getCpf() { return cpf; }
+	public void setCpf(String cpf) { this.cpf = cpf; }
+	public LocalDate getDataNascimento() { return dataNascimento; }
+	public void setDataNascimento(LocalDate dataNascimento) { this.dataNascimento = dataNascimento; }
 	public String getBio() { return bio; }
 	public void setBio(String bio) { this.bio = bio; }
 	public EnderecoEntity getEndereco() { return endereco; }

@@ -6,6 +6,7 @@ import com.educame.educame_api.domain.avaliacao.Avaliacao;
 import com.educame.educame_api.domain.disciplina.Disciplina;
 import com.educame.educame_api.domain.disponibilidade.Disponibilidade;
 import com.educame.educame_api.application.dto.aluno.AlunoResponse;
+import com.educame.educame_api.application.dto.professor.ProfessorResponse;
 import com.educame.educame_api.domain.endereco.Endereco;
 import com.educame.educame_api.domain.enums.AulaStatus;
 import com.educame.educame_api.domain.enums.DisponibilidadeStatus;
@@ -127,6 +128,8 @@ public final class DomainEntityMapper {
 			entity.getAuthUserId(),
 			entity.getNome(),
 			entity.getSobrenome(),
+			entity.getCpf(),
+			entity.getDataNascimento(),
 			entity.getBio(),
 			toDomain(entity.getEndereco()),
 			entity.isAtivo()
@@ -142,10 +145,40 @@ public final class DomainEntityMapper {
 		entity.setAuthUserId(domain.getAuthUserId());
 		entity.setNome(domain.getNome());
 		entity.setSobrenome(domain.getSobrenome());
+		entity.setCpf(domain.getCpf());
+		entity.setDataNascimento(domain.getDataNascimento());
 		entity.setBio(domain.getBio());
 		entity.setEndereco(toEntity(domain.getEndereco()));
 		entity.setAtivo(domain.isAtivo());
 		return entity;
+	}
+
+	public static ProfessorResponse toResponse(Professor domain) {
+		if (domain == null) {
+			return null;
+		}
+		var endereco = domain.getEndereco();
+		return new ProfessorResponse(
+			domain.getId(),
+			domain.getAuthUserId(),
+			domain.getNome(),
+			domain.getSobrenome(),
+			domain.getCpf(),
+			domain.getDataNascimento(),
+			domain.getBio(),
+			domain.isAtivo(),
+			endereco == null ? null : new ProfessorResponse.EnderecoResponse(
+				endereco.getId(),
+				endereco.getRua(),
+				endereco.getNumero(),
+				endereco.getComplemento(),
+				endereco.getBairro(),
+				endereco.getCidade(),
+				endereco.getEstado(),
+				endereco.getCep(),
+				endereco.getPais()
+			)
+		);
 	}
 
 	public static Disciplina toDomain(DisciplinaEntity entity) {
