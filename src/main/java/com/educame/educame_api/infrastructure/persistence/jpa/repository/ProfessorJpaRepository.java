@@ -10,5 +10,5 @@ import java.util.UUID;
 public interface ProfessorJpaRepository extends JpaRepository<ProfessorEntity, UUID> {
 	List<ProfessorEntity> findTop3ByOrderByCreatedAtDesc();
 
-	Optional<ProfessorEntity> findByAuthUserId(UUID authUserId);
+	Optional<ProfessorEntity> findByPessoa_AuthUserId(UUID authUserId);
 }

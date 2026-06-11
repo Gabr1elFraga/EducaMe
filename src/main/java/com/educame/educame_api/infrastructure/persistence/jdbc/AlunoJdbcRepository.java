@@ -10,7 +10,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -19,18 +18,31 @@ import java.util.UUID;
 public class AlunoJdbcRepository implements AlunoRepository {
 	private final NamedParameterJdbcTemplate jdbcTemplate;
 	private final EnderecoRepository enderecoRepository;
+	private final PessoaJdbcRepository pessoaJdbcRepository;
 
-	public AlunoJdbcRepository(NamedParameterJdbcTemplate jdbcTemplate, EnderecoRepository enderecoRepository) {
+	public AlunoJdbcRepository(
+		NamedParameterJdbcTemplate jdbcTemplate,
+		EnderecoRepository enderecoRepository,
+		PessoaJdbcRepository pessoaJdbcRepository
+	) {
 		this.jdbcTemplate = jdbcTemplate;
 		this.enderecoRepository = enderecoRepository;
+		this.pessoaJdbcRepository = pessoaJdbcRepository;
 	}
 
 	@Override
 	public List<Aluno> findAll() {
 		return jdbcTemplate.query("""
-			select id, auth_user_id, nome, sobrenome, data_nascimento, genero, endereco_id
-			from alunos
-			order by created_at desc
+			select a.id,
+				   p.auth_user_id,
+				   p.nome,
+				   p.sobrenome,
+				   p.data_nascimento,
+				   p.genero,
+				   p.endereco_id
+			from alunos a
+			join pessoas p on p.id = a.pessoa_id
+			order by a.created_at desc
 			""", alunoRowMapper());
 	}
 
@@ -38,8 +50,15 @@ public class AlunoJdbcRepository implements AlunoRepository {
 	public Optional<Aluno> findById(UUID id) {
 		try {
 			return Optional.ofNullable(jdbcTemplate.queryForObject("""
-				select id, auth_user_id, nome, sobrenome, data_nascimento, genero, endereco_id
-				from alunos
+				select a.id,
+					   p.auth_user_id,
+					   p.nome,
+					   p.sobrenome,
+					   p.data_nascimento,
+					   p.genero,
+					   p.endereco_id
+				from alunos a
+				join pessoas p on p.id = a.pessoa_id
 				where id = :id
 				""", new MapSqlParameterSource("id", id), alunoRowMapper()));
 		} catch (EmptyResultDataAccessException ex) {
@@ -51,9 +70,16 @@ public class AlunoJdbcRepository implements AlunoRepository {
 	public Optional<Aluno> findByAuthUserId(UUID authUserId) {
 		try {
 			return Optional.ofNullable(jdbcTemplate.queryForObject("""
-				select id, auth_user_id, nome, sobrenome, data_nascimento, genero, endereco_id
-				from alunos
-				where auth_user_id = :authUserId
+				select a.id,
+					   p.auth_user_id,
+					   p.nome,
+					   p.sobrenome,
+					   p.data_nascimento,
+					   p.genero,
+					   p.endereco_id
+				from alunos a
+				join pessoas p on p.id = a.pessoa_id
+				where p.auth_user_id = :authUserId
 				""", new MapSqlParameterSource("authUserId", authUserId), alunoRowMapper()));
 		} catch (EmptyResultDataAccessException ex) {
 			return Optional.empty();
@@ -63,34 +89,33 @@ public class AlunoJdbcRepository implements AlunoRepository {
 	@Override
 	public Aluno save(Aluno aluno) {
 		var id = aluno.getId() != null ? aluno.getId() : UUID.randomUUID();
-		var params = new MapSqlParameterSource()
-			.addValue("id", id)
-			.addValue("authUserId", aluno.getAuthUserId())
-			.addValue("nome", aluno.getNome())
-			.addValue("sobrenome", aluno.getSobrenome())
-			.addValue("dataNascimento", aluno.getDataNascimento())
-			.addValue("genero", aluno.getGenero() != null ? aluno.getGenero().name() : null)
-			.addValue("enderecoId", aluno.getEndereco() != null ? aluno.getEndereco().getId() : null)
-			.addValue("updatedAt", OffsetDateTime.now());
+		var existingPessoaId = findPessoaIdByAlunoId(id).orElse(null);
+		var pessoaId = pessoaJdbcRepository.upsertPessoa(
+			existingPessoaId,
+			aluno.getAuthUserId(),
+			aluno.getNome(),
+			aluno.getSobrenome(),
+			aluno.getDataNascimento(),
+			aluno.getGenero(),
+			aluno.getEndereco() != null ? aluno.getEndereco().getId() : null
+		);
 
 		if (existsById(id)) {
 			jdbcTemplate.update("""
 				update alunos
-				set auth_user_id = :authUserId,
-					nome = :nome,
-					sobrenome = :sobrenome,
-					data_nascimento = :dataNascimento,
-					genero = :genero,
-					endereco_id = :enderecoId,
-					updated_at = :updatedAt
+				set pessoa_id = :pessoaId,
+					updated_at = now()
 				where id = :id
-				""", params);
+				""", new MapSqlParameterSource()
+				.addValue("id", id)
+				.addValue("pessoaId", pessoaId));
 		} else {
-			params.addValue("createdAt", params.getValue("updatedAt"));
 			jdbcTemplate.update("""
-				insert into alunos (id, auth_user_id, nome, sobrenome, data_nascimento, genero, endereco_id, created_at, updated_at)
-				values (:id, :authUserId, :nome, :sobrenome, :dataNascimento, :genero, :enderecoId, :createdAt, :updatedAt)
-				""", params);
+				insert into alunos (id, pessoa_id, created_at, updated_at)
+				values (:id, :pessoaId, now(), now())
+				""", new MapSqlParameterSource()
+				.addValue("id", id)
+				.addValue("pessoaId", pessoaId));
 		}
 
 		return findById(id).orElseThrow();
@@ -111,6 +136,18 @@ public class AlunoJdbcRepository implements AlunoRepository {
 		jdbcTemplate.update("delete from alunos where id = :id", new MapSqlParameterSource("id", id));
 	}
 
+	private Optional<UUID> findPessoaIdByAlunoId(UUID alunoId) {
+		try {
+			return Optional.ofNullable(jdbcTemplate.queryForObject("""
+				select pessoa_id
+				from alunos
+				where id = :id
+				""", new MapSqlParameterSource("id", alunoId), UUID.class));
+		} catch (EmptyResultDataAccessException ex) {
+			return Optional.empty();
+		}
+	}
+
 	private RowMapper<Aluno> alunoRowMapper() {
 		return (rs, rowNum) -> {
 			var aluno = new Aluno();
@@ -121,7 +158,7 @@ public class AlunoJdbcRepository implements AlunoRepository {
 			var dataNascimento = rs.getDate("data_nascimento");
 			aluno.setDataNascimento(dataNascimento != null ? dataNascimento.toLocalDate() : null);
 			var genero = rs.getString("genero");
-			aluno.setGenero(genero != null ? GeneroTipo.valueOf(genero) : null);
+			aluno.setGenero(genero != null ? GeneroTipo.valueOf(genero.toUpperCase()) : null);
 			var enderecoId = rs.getObject("endereco_id", UUID.class);
 			aluno.setEndereco(enderecoId != null ? enderecoRepository.findById(enderecoId).orElse(null) : null);
 			return aluno;

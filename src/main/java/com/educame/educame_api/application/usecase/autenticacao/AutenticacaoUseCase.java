@@ -20,17 +20,15 @@ import java.util.UUID;
 @Service
 public class AutenticacaoUseCase {
 	private final ProfileCadastroRepository profileCadastroRepository;
+	private final DomainEntityMapper domainEntityMapper;
 
-	public AutenticacaoUseCase(ProfileCadastroRepository profileCadastroRepository) {
+	public AutenticacaoUseCase(ProfileCadastroRepository profileCadastroRepository, DomainEntityMapper domainEntityMapper) {
 		this.profileCadastroRepository = profileCadastroRepository;
+		this.domainEntityMapper = domainEntityMapper;
 	}
 
 	public AlunoResponse cadastrarAluno(CadastroAlunoRequest request) {
 		var authUserId = requireAuthUserId(request.authUserId());
-
-		profileCadastroRepository.findProfessorByAuthUserId(authUserId).ifPresent(existing -> {
-			throw new ResponseStatusException(HttpStatus.CONFLICT, "Este usuario ja esta cadastrado como professor.");
-		});
 
 		var aluno = profileCadastroRepository.findAlunoByAuthUserId(authUserId).orElseGet(Aluno::new);
 		aluno.setAuthUserId(authUserId);
@@ -41,15 +39,11 @@ public class AutenticacaoUseCase {
 			aluno.setGenero(GeneroTipo.NAO_INFORMADO);
 		}
 
-		return DomainEntityMapper.toResponse(profileCadastroRepository.saveAluno(aluno));
+		return domainEntityMapper.toResponse(profileCadastroRepository.saveAluno(aluno));
 	}
 
 	public ProfessorResponse cadastrarProfessor(CadastroProfessorRequest request) {
 		var authUserId = requireAuthUserId(request.authUserId());
-
-		profileCadastroRepository.findAlunoByAuthUserId(authUserId).ifPresent(existing -> {
-			throw new ResponseStatusException(HttpStatus.CONFLICT, "Este usuario ja esta cadastrado como aluno.");
-		});
 
 		validateAdult(request.dataNascimento());
 
@@ -61,7 +55,7 @@ public class AutenticacaoUseCase {
 		professor.setDataNascimento(request.dataNascimento());
 		professor.setAtivo(true);
 
-		return DomainEntityMapper.toResponse(profileCadastroRepository.saveProfessor(professor));
+		return domainEntityMapper.toResponse(profileCadastroRepository.saveProfessor(professor));
 	}
 
 	private UUID requireAuthUserId(UUID authUserId) {
