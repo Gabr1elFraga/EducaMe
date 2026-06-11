@@ -4,10 +4,10 @@
 
 .signup-page {
   min-height: 100vh;
-  padding: 20px 24px 28px;
+  padding: 14px 18px 18px;
   display: grid;
   grid-template-rows: auto 1fr;
-  gap: 18px;
+  gap: 12px;
   background:
     radial-gradient(circle at top left, rgba(37, 99, 235, 0.08), transparent 20%),
     radial-gradient(circle at 92% 12%, rgba(59, 130, 246, 0.08), transparent 18%),
@@ -15,8 +15,8 @@
 }
 
 .topbar {
-  height: 72px;
-  padding: 0 18px 0 10px;
+  height: 64px;
+  padding: 0 16px 0 8px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -85,11 +85,11 @@
 }
 
 .signup-panel {
-  padding: 34px 34px 30px;
+  padding: 24px 28px 20px;
   border-right: 1px solid rgba(217, 227, 242, 0.9);
   display: grid;
   align-content: start;
-  gap: 22px;
+  gap: 16px;
   background: rgba(255, 255, 255, 0.92);
 }
 
@@ -100,14 +100,14 @@
 
 .page-heading h1 {
   margin: 0;
-  font-size: clamp(2.2rem, 3vw, 3.55rem);
+  font-size: clamp(2rem, 2.8vw, 3.15rem);
   line-height: 1;
   letter-spacing: -0.06em;
   color: #0f1f52;
 }
 
 .page-heading p:last-child {
-  margin: 12px 0 0;
+  margin: 8px 0 0;
   font-size: 1rem;
   color: #64748b;
 }
@@ -129,7 +129,7 @@
 
 .step-block {
   display: grid;
-  gap: 16px;
+  gap: 12px;
 }
 
 .step-title-row h2 {
@@ -143,13 +143,13 @@
 .profile-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
+  gap: 12px;
 }
 
 .profile-card {
   position: relative;
-  min-height: 289px;
-  padding: 22px 20px 20px;
+  min-height: 242px;
+  padding: 18px 18px 16px;
   border-radius: 18px;
   border: 1.5px solid #d7dfeb;
   background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
@@ -196,30 +196,104 @@
 }
 
 .profile-illustration {
-  width: 92px;
-  height: 92px;
-  border-radius: 50%;
+  width: 110px;
+  height: 110px;
   display: grid;
   place-items: center;
-  color: #2563eb;
-  background: radial-gradient(circle at 50% 35%, #eaf2ff 0%, #dbeafe 100%);
 }
 
-.profile-illustration mat-icon {
-  font-size: 3rem;
-  width: auto;
-  height: auto;
+.profile-illustration svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.illus-bg {
+  fill: #dbeafe;
+}
+
+.profile-illustration--teacher .illus-bg {
+  fill: #e0edff;
+}
+
+.profile-illustration--student .illus-book,
+.profile-illustration--student .illus-book-top,
+.profile-illustration--student .illus-cap,
+.profile-illustration--student .illus-cap-line,
+.profile-illustration--student .illus-cap-drop,
+.profile-illustration--student .illus-figure,
+.profile-illustration--student .illus-head,
+.profile-illustration--student .illus-shadow {
+  stroke: none;
+}
+
+.illus-book {
+  fill: #2f6df6;
+}
+
+.illus-book-top {
+  fill: #4f7df3;
+}
+
+.illus-cap,
+.illus-board,
+.illus-figure {
+  fill: #1f4fd6;
+}
+
+.illus-cap {
+  opacity: 0.95;
+}
+
+.illus-cap-line,
+.illus-cap-drop,
+.illus-board-line,
+.illus-arm {
+  fill: none;
+  stroke: #1f4fd6;
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.illus-cap-drop {
+  fill: #1f4fd6;
+  stroke: none;
+}
+
+.illus-board {
+  fill: #cfe0ff;
+}
+
+.illus-board-line {
+  stroke: #7ba2ff;
+  stroke-width: 4.5;
+}
+
+.illus-figure {
+  fill: #335fe8;
+}
+
+.illus-head {
+  fill: #1f4fd6;
+}
+
+.illus-shadow {
+  fill: none;
+  stroke: rgba(31, 79, 214, 0.18);
+  stroke-width: 4;
+  stroke-linecap: round;
 }
 
 .profile-card strong {
-  font-size: 1.7rem;
+  font-size: 1.55rem;
   letter-spacing: -0.04em;
   color: #10224f;
 }
 
 .profile-card p {
   margin: 0;
-  min-height: 52px;
+  min-height: 44px;
   color: #64748b;
   line-height: 1.6;
 }
@@ -227,7 +301,7 @@
 .profile-action {
   width: 100%;
   max-width: 160px;
-  min-height: 40px;
+  min-height: 36px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -249,7 +323,7 @@
   position: relative;
   height: 1px;
   background: rgba(217, 227, 242, 0.95);
-  margin: 4px 0 0;
+  margin: 0;
 }
 
 .step-dot {
@@ -302,16 +376,16 @@
 
 .signup-form {
   display: grid;
-  gap: 14px;
+  gap: 11px;
 }
 
 .login-panel {
-  align-content: center;
-  gap: 18px;
+  align-content: start;
+  gap: 12px;
 }
 
 .login-form {
-  margin-top: 6px;
+  margin-top: 0;
 }
 
 .field-grid {
@@ -329,9 +403,9 @@
 }
 
 .submit-button {
-  min-height: 52px;
+  min-height: 48px;
   border-radius: 12px;
-  margin-top: 6px;
+  margin-top: 2px;
   gap: 8px;
 }
 
@@ -372,11 +446,11 @@
 
 .art-panel {
   position: relative;
-  padding: 42px 34px 30px;
+  padding: 20px 22px 16px;
   overflow: hidden;
   display: grid;
   align-content: space-between;
-  gap: 22px;
+  gap: 12px;
   background:
     radial-gradient(circle at 36% 18%, rgba(37, 99, 235, 0.08), transparent 28%),
     radial-gradient(circle at 78% 68%, rgba(37, 99, 235, 0.06), transparent 30%),
@@ -391,31 +465,31 @@
 }
 
 .art-cloud-a {
-  width: 260px;
-  height: 260px;
-  top: 60px;
-  right: 60px;
+  width: 220px;
+  height: 220px;
+  top: 40px;
+  right: 34px;
 }
 
 .art-cloud-b {
-  width: 360px;
-  height: 360px;
-  top: 210px;
+  width: 300px;
+  height: 300px;
+  top: 170px;
   left: 14px;
 }
 
 .art-cloud-c {
-  width: 220px;
-  height: 220px;
-  bottom: 130px;
-  right: 14px;
+  width: 180px;
+  height: 180px;
+  bottom: 104px;
+  right: 18px;
 }
 
 .art-window {
   position: relative;
   z-index: 1;
   height: 100%;
-  min-height: 560px;
+  min-height: 440px;
   border-radius: 26px;
   border: 1px solid rgba(191, 206, 234, 0.7);
   background:
@@ -448,20 +522,20 @@
 }
 
 .teacher-card {
-  top: 102px;
-  left: 34px;
-  right: 48px;
-  height: 230px;
-  padding: 22px 24px;
+  top: 86px;
+  left: 24px;
+  right: 36px;
+  height: 186px;
+  padding: 18px 20px;
 }
 
 .teacher-avatar {
   position: absolute;
-  top: 26px;
-  left: 28px;
-  width: 120px;
-  height: 120px;
-  border-radius: 34px;
+  top: 22px;
+  left: 24px;
+  width: 92px;
+  height: 92px;
+  border-radius: 24px;
   display: grid;
   place-items: center;
   color: #2563eb;
@@ -470,22 +544,22 @@
 }
 
 .teacher-avatar mat-icon {
-  font-size: 4rem;
+  font-size: 3.2rem;
 }
 
 .teacher-lines {
   position: absolute;
-  top: 30px;
-  left: 176px;
+  top: 28px;
+  left: 140px;
   right: 24px;
   display: grid;
-  gap: 14px;
+  gap: 10px;
 }
 
 .teacher-lines span,
 .student-lines span {
   display: block;
-  height: 16px;
+  height: 12px;
   border-radius: 999px;
   background: linear-gradient(90deg, rgba(226, 232, 240, 0.92), rgba(226, 232, 240, 0.42));
 }
@@ -504,18 +578,18 @@
 
 .student-card {
   right: 32px;
-  bottom: 100px;
-  width: 318px;
-  height: 284px;
-  padding: 18px;
+  bottom: 96px;
+  width: 248px;
+  height: 206px;
+  padding: 16px;
 }
 
 .student-avatar {
   position: absolute;
-  top: 22px;
-  left: 24px;
-  width: 112px;
-  height: 112px;
+  top: 18px;
+  left: 20px;
+  width: 84px;
+  height: 84px;
   border-radius: 50%;
   display: grid;
   place-items: center;
@@ -524,16 +598,16 @@
 }
 
 .student-avatar mat-icon {
-  font-size: 3.8rem;
+  font-size: 3rem;
 }
 
 .student-lines {
   position: absolute;
-  top: 30px;
-  left: 152px;
+  top: 24px;
+  left: 122px;
   right: 22px;
   display: grid;
-  gap: 14px;
+  gap: 10px;
 }
 
 .student-lines span:nth-child(1) {
@@ -549,8 +623,8 @@
   z-index: 1;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 18px;
-  padding: 24px 20px;
+  gap: 14px;
+  padding: 16px 16px;
   border-radius: 22px;
   border: 1px solid rgba(217, 227, 242, 0.95);
   background: rgba(255, 255, 255, 0.9);
@@ -560,18 +634,18 @@
 .feature-item {
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: 14px;
+  gap: 12px;
   align-items: center;
 }
 
 .feature-item:not(:last-child) {
-  padding-right: 18px;
+  padding-right: 12px;
   border-right: 1px solid rgba(217, 227, 242, 0.95);
 }
 
 .feature-icon {
-  width: 56px;
-  height: 56px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   display: grid;
   place-items: center;
@@ -580,19 +654,20 @@
 }
 
 .feature-icon mat-icon {
-  font-size: 1.45rem;
+  font-size: 1.2rem;
 }
 
 .feature-item strong {
   display: block;
   color: #10224f;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 
 .feature-item p {
   margin: 0;
   color: #64748b;
   line-height: 1.5;
+  font-size: 0.92rem;
 }
 
 @media (max-width: 1180px) {
@@ -606,7 +681,7 @@
   }
 
   .art-panel {
-    min-height: 720px;
+    min-height: 620px;
   }
 }
 
@@ -625,7 +700,7 @@
   }
 
   .signup-panel {
-    padding: 24px 18px 22px;
+    padding: 20px 16px 18px;
   }
 
   .profile-grid,
@@ -635,7 +710,7 @@
   }
 
   .profile-card {
-    min-height: 262px;
+    min-height: 236px;
   }
 
   .feature-item:not(:last-child) {
@@ -646,41 +721,41 @@
   }
 
   .art-panel {
-    padding: 22px 18px 20px;
-    min-height: 620px;
+    padding: 18px 16px 18px;
+    min-height: 560px;
   }
 
   .art-window {
-    min-height: 500px;
+    min-height: 420px;
   }
 
   .teacher-card {
-    left: 18px;
-    right: 18px;
-    padding: 18px;
+    left: 16px;
+    right: 16px;
+    padding: 16px;
   }
 
   .teacher-avatar {
-    width: 92px;
-    height: 92px;
+    width: 78px;
+    height: 78px;
   }
 
   .teacher-lines {
-    left: 136px;
+    left: 116px;
   }
 
   .student-card {
     right: 14px;
-    width: 264px;
-    height: 240px;
+    width: 208px;
+    height: 186px;
   }
 
   .student-avatar {
-    width: 90px;
-    height: 90px;
+    width: 74px;
+    height: 74px;
   }
 
   .student-lines {
-    left: 118px;
+    left: 104px;
   }
 }
