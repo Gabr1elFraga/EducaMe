@@ -5,13 +5,11 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatTabsModule } from '@angular/material/tabs';
 import { AuthService } from '../../core/services/auth.service';
 
 type UserActor = 'aluno' | 'professor';
@@ -23,17 +21,17 @@ type UserActor = 'aluno' | 'professor';
     CommonModule,
     ReactiveFormsModule,
     MatButtonModule,
-    MatCardModule,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
-    MatTabsModule,
+    RouterLink,
   ],
   templateUrl: './login.page.html',
   styleUrl: './login.page.css',
 })
 export class LoginPageComponent implements OnInit {
   private readonly formBuilder = inject(FormBuilder);
+  authMode: 'signup' | 'login' = 'signup';
 
   readonly loginForm = this.formBuilder.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
@@ -88,11 +86,13 @@ export class LoginPageComponent implements OnInit {
   }
 
   openLoginTab(): void {
+    this.authMode = 'login';
     this.activeTabIndex = 0;
     this.clearFeedback();
   }
 
   openRegisterTab(): void {
+    this.authMode = 'signup';
     this.activeTabIndex = 1;
     this.clearFeedback();
   }
@@ -103,7 +103,7 @@ export class LoginPageComponent implements OnInit {
 
     this.clearFeedback();
 
-    if (this.selectedActor === null) {
+    if (this.authMode === 'signup' && this.selectedActor === null) {
       this.errorMessage = 'Selecione primeiro se voce e Aluno ou Professor.';
       return;
     }
