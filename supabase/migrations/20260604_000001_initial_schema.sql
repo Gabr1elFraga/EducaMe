@@ -2,7 +2,7 @@ create extension if not exists "pgcrypto";
 
 do $$
 begin
-  create type public.genero_tipo as enum ('feminino', 'masculino', 'outro', 'nao_informado');
+  create type public.genero_tipo as enum ('FEMININO', 'MASCULINO', 'OUTRO', 'NAO_INFORMADO');
 exception
   when duplicate_object then null;
 end $$;
@@ -48,7 +48,7 @@ create table if not exists public.alunos (
   nome text not null,
   sobrenome text not null,
   data_nascimento date not null,
-  genero public.genero_tipo not null default 'nao_informado',
+  genero public.genero_tipo not null default 'OUTRO',
   endereco_id uuid references public.enderecos (id) on delete set null,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()

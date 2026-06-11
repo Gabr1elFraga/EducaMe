@@ -11,12 +11,13 @@ declare
   cpf_numeros text := regexp_replace(coalesce(new.raw_user_meta_data ->> 'cpf', ''), '\D', '', 'g');
   data_nascimento_text text := nullif(trim(coalesce(new.raw_user_meta_data ->> 'data_nascimento', '')), '');
   data_nascimento date := null;
+  pessoa_id uuid;
 begin
   if data_nascimento_text is not null then
     data_nascimento := data_nascimento_text::date;
   end if;
 
-  if profile_type = 'professor' then
+  if profile_type in ('professor', 'ambos', 'both') then
     if data_nascimento is null then
       raise exception 'Data de nascimento obrigatoria para professor.';
     end if;
@@ -25,67 +26,66 @@ begin
       raise exception 'Professor menor de idade nao pode ministrar aulas.';
     end if;
 
+  end if;
+
+  insert into public.pessoas (
+    auth_user_id,
+    nome,
+    sobrenome,
+    data_nascimento,
+    genero,
+    endereco_id
+  )
+  values (
+    new.id,
+    coalesce(nome, ''),
+    coalesce(sobrenome, ''),
+    coalesce(data_nascimento, current_date),
+    coalesce(
+      nullif(upper(coalesce(new.raw_user_meta_data ->> 'genero', 'NAO_INFORMADO')), '')::public.genero_tipo,
+      'NAO_INFORMADO'::public.genero_tipo
+    ),
+    null
+  )
+  on conflict (auth_user_id) do update
+    set nome = excluded.nome,
+        sobrenome = excluded.sobrenome,
+        data_nascimento = excluded.data_nascimento,
+        genero = excluded.genero,
+        updated_at = now()
+  returning id into pessoa_id;
+
+  if profile_type in ('aluno', 'ambos', 'both') then
+    insert into public.alunos (
+      pessoa_id
+    )
+    values (
+      pessoa_id
+    )
+    on conflict (pessoa_id) do update
+      set updated_at = now();
+  end if;
+
+  if profile_type in ('professor', 'ambos', 'both') then
     insert into public.professores (
-      auth_user_id,
-      nome,
-      sobrenome,
+      pessoa_id,
       cpf,
-      data_nascimento,
       bio,
       ativo
     )
     values (
-      new.id,
-      coalesce(nome, ''),
-      coalesce(sobrenome, ''),
+      pessoa_id,
       cpf_numeros,
-      data_nascimento,
       null,
       true
     )
-    on conflict (auth_user_id) do update
-      set nome = excluded.nome,
-          sobrenome = excluded.sobrenome,
-          cpf = excluded.cpf,
-          data_nascimento = excluded.data_nascimento,
+    on conflict (pessoa_id) do update
+      set cpf = excluded.cpf,
           bio = excluded.bio,
-          ativo = excluded.ativo;
-  else
-    insert into public.alunos (
-      auth_user_id,
-      nome,
-      sobrenome,
-      data_nascimento,
-      genero
-    )
-    values (
-      new.id,
-      coalesce(nome, ''),
-      coalesce(sobrenome, ''),
-      data_nascimento,
-      'NAO_INFORMADO'
-    )
-    on conflict (auth_user_id) do update
-      set nome = excluded.nome,
-          sobrenome = excluded.sobrenome,
-          data_nascimento = excluded.data_nascimento,
-          genero = excluded.genero;
+          ativo = excluded.ativo,
+          updated_at = now();
   end if;
 
   return new;
 end;
 $$;
-
-do $$
-begin
-  if not exists (
-    select 1
-    from pg_trigger
-    where tgname = 'on_auth_user_created'
-  ) then
-    create trigger on_auth_user_created
-      after insert on auth.users
-      for each row
-      execute function public.handle_new_user_profile();
-  end if;
-end $$;
