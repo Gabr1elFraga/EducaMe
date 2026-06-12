@@ -12,13 +12,13 @@ public class Avaliacao {
 	private Aula aula;
 	private Aluno aluno;
 	private Professor professor;
-	private Integer nota;
+	private Short nota;
 	private String comentario;
 
 	public Avaliacao() {
 	}
 
-	public Avaliacao(UUID id, Aula aula, Aluno aluno, Professor professor, Integer nota, String comentario) {
+	public Avaliacao(UUID id, Aula aula, Aluno aluno, Professor professor, Short nota, String comentario) {
 		this.id = id;
 		this.aula = aula;
 		this.aluno = aluno;
@@ -35,8 +35,8 @@ public class Avaliacao {
 	public void setAluno(Aluno aluno) { this.aluno = aluno; }
 	public Professor getProfessor() { return professor; }
 	public void setProfessor(Professor professor) { this.professor = professor; }
-	public Integer getNota() { return nota; }
-	public void setNota(Integer nota) { this.nota = nota; }
+	public Short getNota() { return nota; }
+	public void setNota(Short nota) { this.nota = nota; }
 	public String getComentario() { return comentario; }
 	public void setComentario(String comentario) { this.comentario = comentario; }
 
