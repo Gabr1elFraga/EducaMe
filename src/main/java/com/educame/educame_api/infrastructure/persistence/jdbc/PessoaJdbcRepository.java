@@ -33,7 +33,9 @@ public class PessoaJdbcRepository {
 		String sobrenome,
 		LocalDate dataNascimento,
 		GeneroTipo genero,
-		UUID enderecoId
+		UUID enderecoId,
+		String cpf,
+		String fotoPerfil
 	) {
 		var now = OffsetDateTime.now();
 		var existingId = pessoaId != null ? pessoaId : findIdByAuthUserId(authUserId).orElse(null);
@@ -47,6 +49,8 @@ public class PessoaJdbcRepository {
 					data_nascimento = :dataNascimento,
 					genero = :genero,
 					endereco_id = :enderecoId,
+					cpf = :cpf,
+					foto_perfil = :fotoPerfil,
 					updated_at = :updatedAt
 				where id = :id
 				""", new MapSqlParameterSource()
@@ -57,6 +61,8 @@ public class PessoaJdbcRepository {
 				.addValue("dataNascimento", dataNascimento)
 				.addValue("genero", genero != null ? genero.name() : GeneroTipo.NAO_INFORMADO.name())
 				.addValue("enderecoId", resolvedEnderecoId)
+				.addValue("cpf", cpf)
+				.addValue("fotoPerfil", fotoPerfil)
 				.addValue("updatedAt", now));
 			return existingId;
 		}
@@ -69,6 +75,8 @@ public class PessoaJdbcRepository {
 				data_nascimento,
 				genero,
 				endereco_id,
+				cpf,
+				foto_perfil,
 				created_at,
 				updated_at
 			)
@@ -79,6 +87,8 @@ public class PessoaJdbcRepository {
 				:dataNascimento,
 				:genero,
 				:enderecoId,
+				:cpf,
+				:fotoPerfil,
 				:createdAt,
 				:updatedAt
 			)
@@ -90,6 +100,8 @@ public class PessoaJdbcRepository {
 			.addValue("dataNascimento", dataNascimento)
 			.addValue("genero", genero != null ? genero.name() : GeneroTipo.NAO_INFORMADO.name())
 			.addValue("enderecoId", enderecoId)
+			.addValue("cpf", cpf)
+			.addValue("fotoPerfil", fotoPerfil)
 			.addValue("createdAt", now)
 			.addValue("updatedAt", now), UUID.class);
 	}

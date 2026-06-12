@@ -24,7 +24,7 @@ export class AuthService {
     this.client = createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey, {
       auth: {
         autoRefreshToken: true,
-        detectSessionInUrl: false,
+        detectSessionInUrl: true,
         persistSession: true,
       },
     });
@@ -109,6 +109,19 @@ export class AuthService {
       session: data.session,
       user: data.user,
     };
+  }
+
+  async signInWithGoogle(): Promise<void> {
+    const { error } = await this.client.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin,
+      },
+    });
+
+    if (error) {
+      throw new Error(error.message);
+    }
   }
 
   async signOut(): Promise<void> {

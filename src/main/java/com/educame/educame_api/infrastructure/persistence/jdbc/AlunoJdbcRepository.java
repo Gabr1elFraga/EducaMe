@@ -97,7 +97,9 @@ public class AlunoJdbcRepository implements AlunoRepository {
 			aluno.getSobrenome(),
 			aluno.getDataNascimento(),
 			aluno.getGenero(),
-			aluno.getEndereco() != null ? aluno.getEndereco().getId() : null
+			aluno.getEndereco() != null ? aluno.getEndereco().getId() : null,
+			null,
+			null
 		);
 
 		if (existsById(id)) {

@@ -16,8 +16,6 @@ public class ProfessorEntity extends BaseJpaEntity {
 	@OneToOne(optional = false, cascade = CascadeType.ALL)
 	@JoinColumn(name = "pessoa_id", nullable = false, unique = true)
 	private PessoaEntity pessoa;
-	@Column(unique = true)
-	private String cpf;
 	@Column(columnDefinition = "text")
 	private String bio;
 	@Column(nullable = false)
@@ -79,8 +77,8 @@ public class ProfessorEntity extends BaseJpaEntity {
 		ensurePessoa().setEndereco(endereco);
 	}
 
-	public String getCpf() { return cpf; }
-	public void setCpf(String cpf) { this.cpf = cpf; }
+	public String getCpf() { return pessoa != null ? pessoa.getCpf() : null; }
+	public void setCpf(String cpf) { ensurePessoa().setCpf(cpf); }
 	public String getBio() { return bio; }
 	public void setBio(String bio) { this.bio = bio; }
 	public boolean isAtivo() { return ativo; }
