@@ -1,9 +1,11 @@
 package com.educame.educame_api.infrastructure.persistence.jpa.entity;
 
+import com.educame.educame_api.domain.enums.GeneroTipo;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 import java.util.UUID;
@@ -11,30 +13,83 @@ import java.util.UUID;
 @Entity
 @Table(name = "professores")
 public class ProfessorEntity extends BaseJpaEntity {
-	@Column(name = "auth_user_id", unique = true)
-	private UUID authUserId;
-	@Column(nullable = false)
-	private String nome;
-	@Column(nullable = false)
-	private String sobrenome;
+	@OneToOne(optional = false, cascade = CascadeType.ALL)
+	@JoinColumn(name = "pessoa_id", nullable = false, unique = true)
+	private PessoaEntity pessoa;
+	@Column(unique = true)
+	private String cpf;
 	@Column(columnDefinition = "text")
 	private String bio;
-	@ManyToOne
-	@JoinColumn(name = "endereco_id")
-	private EnderecoEntity endereco;
 	@Column(nullable = false)
 	private boolean ativo = true;
 
-	public UUID getAuthUserId() { return authUserId; }
-	public void setAuthUserId(UUID authUserId) { this.authUserId = authUserId; }
-	public String getNome() { return nome; }
-	public void setNome(String nome) { this.nome = nome; }
-	public String getSobrenome() { return sobrenome; }
-	public void setSobrenome(String sobrenome) { this.sobrenome = sobrenome; }
+	public PessoaEntity getPessoa() {
+		return pessoa;
+	}
+
+	public void setPessoa(PessoaEntity pessoa) {
+		this.pessoa = pessoa;
+	}
+
+	public UUID getAuthUserId() {
+		return pessoa != null ? pessoa.getAuthUserId() : null;
+	}
+
+	public void setAuthUserId(UUID authUserId) {
+		ensurePessoa().setAuthUserId(authUserId);
+	}
+
+	public String getNome() {
+		return pessoa != null ? pessoa.getNome() : null;
+	}
+
+	public void setNome(String nome) {
+		ensurePessoa().setNome(nome);
+	}
+
+	public String getSobrenome() {
+		return pessoa != null ? pessoa.getSobrenome() : null;
+	}
+
+	public void setSobrenome(String sobrenome) {
+		ensurePessoa().setSobrenome(sobrenome);
+	}
+
+	public java.time.LocalDate getDataNascimento() {
+		return pessoa != null ? pessoa.getDataNascimento() : null;
+	}
+
+	public void setDataNascimento(java.time.LocalDate dataNascimento) {
+		ensurePessoa().setDataNascimento(dataNascimento);
+	}
+
+	public GeneroTipo getGenero() {
+		return pessoa != null ? pessoa.getGenero() : GeneroTipo.NAO_INFORMADO;
+	}
+
+	public void setGenero(GeneroTipo genero) {
+		ensurePessoa().setGenero(genero);
+	}
+
+	public EnderecoEntity getEndereco() {
+		return pessoa != null ? pessoa.getEndereco() : null;
+	}
+
+	public void setEndereco(EnderecoEntity endereco) {
+		ensurePessoa().setEndereco(endereco);
+	}
+
+	public String getCpf() { return cpf; }
+	public void setCpf(String cpf) { this.cpf = cpf; }
 	public String getBio() { return bio; }
 	public void setBio(String bio) { this.bio = bio; }
-	public EnderecoEntity getEndereco() { return endereco; }
-	public void setEndereco(EnderecoEntity endereco) { this.endereco = endereco; }
 	public boolean isAtivo() { return ativo; }
 	public void setAtivo(boolean ativo) { this.ativo = ativo; }
+
+	private PessoaEntity ensurePessoa() {
+		if (pessoa == null) {
+			pessoa = new PessoaEntity();
+		}
+		return pessoa;
+	}
 }

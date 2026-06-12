@@ -11,6 +11,8 @@ public interface AlunoRepository {
 
 	Optional<Aluno> findById(UUID id);
 
+	Optional<Aluno> findByAuthUserId(UUID authUserId);
+
 	Aluno save(Aluno aluno);
 
 	boolean existsById(UUID id);

@@ -18,22 +18,24 @@ import java.util.UUID;
 public class AlunoUseCase {
 	private final AlunoRepository alunoRepository;
 	private final EnderecoRepository enderecoRepository;
+	private final DomainEntityMapper domainEntityMapper;
 
-	public AlunoUseCase(AlunoRepository alunoRepository, EnderecoRepository enderecoRepository) {
+	public AlunoUseCase(AlunoRepository alunoRepository, EnderecoRepository enderecoRepository, DomainEntityMapper domainEntityMapper) {
 		this.alunoRepository = alunoRepository;
 		this.enderecoRepository = enderecoRepository;
+		this.domainEntityMapper = domainEntityMapper;
 	}
 
 	public List<AlunoResponse> list() {
 		return alunoRepository.findAll()
 			.stream()
-			.map(DomainEntityMapper::toResponse)
+			.map(domainEntityMapper::toResponse)
 			.toList();
 	}
 
 	public AlunoResponse findById(UUID id) {
 		return alunoRepository.findById(id)
-			.map(DomainEntityMapper::toResponse)
+			.map(domainEntityMapper::toResponse)
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Aluno não encontrado."));
 	}
 
@@ -46,7 +48,7 @@ public class AlunoUseCase {
 		aluno.setGenero(request.genero());
 		aluno.setEndereco(resolveEndereco(request.enderecoId()));
 
-		return DomainEntityMapper.toResponse(alunoRepository.save(aluno));
+		return domainEntityMapper.toResponse(alunoRepository.save(aluno));
 	}
 
 	public AlunoResponse update(UUID id, AlunoRequest request) {
@@ -60,7 +62,7 @@ public class AlunoUseCase {
 		aluno.setGenero(request.genero());
 		aluno.setEndereco(resolveEndereco(request.enderecoId()));
 
-		return DomainEntityMapper.toResponse(alunoRepository.save(aluno));
+		return domainEntityMapper.toResponse(alunoRepository.save(aluno));
 	}
 
 	public void delete(UUID id) {
