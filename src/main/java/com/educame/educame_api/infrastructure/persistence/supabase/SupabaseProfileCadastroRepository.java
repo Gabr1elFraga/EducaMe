@@ -68,7 +68,7 @@ public class SupabaseProfileCadastroRepository implements ProfileCadastroReposit
 					   p.auth_user_id,
 					   p.nome,
 					   p.sobrenome,
-					   pr.cpf,
+					   p.cpf,
 					   p.data_nascimento,
 					   pr.bio,
 					   pr.ativo,
@@ -93,7 +93,9 @@ public class SupabaseProfileCadastroRepository implements ProfileCadastroReposit
 			aluno.getSobrenome(),
 			aluno.getDataNascimento(),
 			aluno.getGenero() != null ? aluno.getGenero() : GeneroTipo.NAO_INFORMADO,
-			aluno.getEndereco() != null ? aluno.getEndereco().getId() : null
+			aluno.getEndereco() != null ? aluno.getEndereco().getId() : null,
+			null,
+			null
 		);
 
 		if (existingProfile.isPresent()) {
@@ -128,14 +130,15 @@ public class SupabaseProfileCadastroRepository implements ProfileCadastroReposit
 			professor.getSobrenome(),
 			professor.getDataNascimento(),
 			GeneroTipo.NAO_INFORMADO,
-			professor.getEndereco() != null ? professor.getEndereco().getId() : null
+			professor.getEndereco() != null ? professor.getEndereco().getId() : null,
+			professor.getCpf(),
+			professor.getPessoa() != null ? professor.getPessoa().getFotoPerfil() : null
 		);
 
 		if (existingProfile.isPresent()) {
 			jdbcTemplate.update("""
 				update public.professores
 				set pessoa_id = :pessoaId,
-					cpf = :cpf,
 					bio = :bio,
 					ativo = :ativo,
 					updated_at = now()
@@ -143,17 +146,15 @@ public class SupabaseProfileCadastroRepository implements ProfileCadastroReposit
 				""", new MapSqlParameterSource()
 				.addValue("id", existingProfile.get().id())
 				.addValue("pessoaId", pessoaId)
-				.addValue("cpf", professor.getCpf())
 				.addValue("bio", professor.getBio())
 				.addValue("ativo", professor.isAtivo()));
 		} else {
 			jdbcTemplate.update("""
-				insert into public.professores (id, pessoa_id, cpf, bio, ativo, created_at, updated_at)
-				values (:id, :pessoaId, :cpf, :bio, :ativo, now(), now())
+				insert into public.professores (id, pessoa_id, bio, ativo, created_at, updated_at)
+				values (:id, :pessoaId, :bio, :ativo, now(), now())
 				""", new MapSqlParameterSource()
 				.addValue("id", id)
 				.addValue("pessoaId", pessoaId)
-				.addValue("cpf", professor.getCpf())
 				.addValue("bio", professor.getBio())
 				.addValue("ativo", professor.isAtivo()));
 		}

@@ -29,6 +29,9 @@ public class PessoaEntity extends BaseJpaEntity {
 	@ManyToOne
 	@JoinColumn(name = "endereco_id")
 	private EnderecoEntity endereco;
+	private String cpf;
+	@Column(name = "foto_perfil")
+	private String fotoPerfil;
 
 	public UUID getAuthUserId() {
 		return authUserId;
@@ -76,5 +79,21 @@ public class PessoaEntity extends BaseJpaEntity {
 
 	public void setEndereco(EnderecoEntity endereco) {
 		this.endereco = endereco;
+	}
+
+	public String getCpf() {
+		return cpf;
+	}
+
+	public void setCpf(String cpf) {
+		this.cpf = cpf;
+	}
+
+	public String getFotoPerfil() {
+		return fotoPerfil;
+	}
+
+	public void setFotoPerfil(String fotoPerfil) {
+		this.fotoPerfil = fotoPerfil;
 	}
 }

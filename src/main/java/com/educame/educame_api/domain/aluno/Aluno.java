@@ -2,47 +2,46 @@ package com.educame.educame_api.domain.aluno;
 
 import com.educame.educame_api.domain.endereco.Endereco;
 import com.educame.educame_api.domain.enums.GeneroTipo;
+import com.educame.educame_api.domain.pessoa.Pessoa;
 
-import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
 
 public class Aluno {
 	private UUID id;
-	private UUID authUserId;
-	private String nome;
-	private String sobrenome;
-	private LocalDate dataNascimento;
-	private GeneroTipo genero;
-	private Endereco endereco;
+	private Pessoa pessoa;
 
 	public Aluno() {
 	}
 
-	public Aluno(UUID id, UUID authUserId, String nome, String sobrenome, LocalDate dataNascimento, GeneroTipo genero, Endereco endereco) {
+	public Aluno(UUID id, Pessoa pessoa) {
 		this.id = id;
-		this.authUserId = authUserId;
-		this.nome = nome;
-		this.sobrenome = sobrenome;
-		this.dataNascimento = dataNascimento;
-		this.genero = genero;
-		this.endereco = endereco;
+		this.pessoa = pessoa;
 	}
 
 	public UUID getId() { return id; }
 	public void setId(UUID id) { this.id = id; }
-	public UUID getAuthUserId() { return authUserId; }
-	public void setAuthUserId(UUID authUserId) { this.authUserId = authUserId; }
-	public String getNome() { return nome; }
-	public void setNome(String nome) { this.nome = nome; }
-	public String getSobrenome() { return sobrenome; }
-	public void setSobrenome(String sobrenome) { this.sobrenome = sobrenome; }
-	public LocalDate getDataNascimento() { return dataNascimento; }
-	public void setDataNascimento(LocalDate dataNascimento) { this.dataNascimento = dataNascimento; }
-	public GeneroTipo getGenero() { return genero; }
-	public void setGenero(GeneroTipo genero) { this.genero = genero; }
-	public Endereco getEndereco() { return endereco; }
-	public void setEndereco(Endereco endereco) { this.endereco = endereco; }
+	public Pessoa getPessoa() { return pessoa; }
+	public void setPessoa(Pessoa pessoa) { this.pessoa = pessoa; }
+	public UUID getAuthUserId() { return pessoa != null ? pessoa.getAuthUserId() : null; }
+	public void setAuthUserId(UUID authUserId) { ensurePessoa().setAuthUserId(authUserId); }
+	public String getNome() { return pessoa != null ? pessoa.getNome() : null; }
+	public void setNome(String nome) { ensurePessoa().setNome(nome); }
+	public String getSobrenome() { return pessoa != null ? pessoa.getSobrenome() : null; }
+	public void setSobrenome(String sobrenome) { ensurePessoa().setSobrenome(sobrenome); }
+	public java.time.LocalDate getDataNascimento() { return pessoa != null ? pessoa.getDataNascimento() : null; }
+	public void setDataNascimento(java.time.LocalDate dataNascimento) { ensurePessoa().setDataNascimento(dataNascimento); }
+	public GeneroTipo getGenero() { return pessoa != null ? pessoa.getGenero() : null; }
+	public void setGenero(GeneroTipo genero) { ensurePessoa().setGenero(genero); }
+	public Endereco getEndereco() { return pessoa != null ? pessoa.getEndereco() : null; }
+	public void setEndereco(Endereco endereco) { ensurePessoa().setEndereco(endereco); }
+
+	private Pessoa ensurePessoa() {
+		if (pessoa == null) {
+			pessoa = new Pessoa();
+		}
+		return pessoa;
+	}
 
 	@Override
 	public boolean equals(Object o) {

@@ -1,55 +1,66 @@
 package com.educame.educame_api.domain.professor;
 
 import com.educame.educame_api.domain.endereco.Endereco;
+import com.educame.educame_api.domain.pessoa.Pessoa;
 
-import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
 
 public class Professor {
 	private UUID id;
-	private UUID authUserId;
-	private String nome;
-	private String sobrenome;
-	private String cpf;
-	private LocalDate dataNascimento;
+	private Pessoa pessoa;
 	private String bio;
-	private Endereco endereco;
 	private boolean ativo;
+	private String diploma;
+	private String statusVerificacao;
+	private java.math.BigDecimal valorHoraAula;
 
 	public Professor() {
 	}
 
-	public Professor(UUID id, UUID authUserId, String nome, String sobrenome, String cpf, LocalDate dataNascimento, String bio, Endereco endereco, boolean ativo) {
+	public Professor(UUID id, Pessoa pessoa, String bio, boolean ativo, String diploma, String statusVerificacao, java.math.BigDecimal valorHoraAula) {
 		this.id = id;
-		this.authUserId = authUserId;
-		this.nome = nome;
-		this.sobrenome = sobrenome;
-		this.cpf = cpf;
-		this.dataNascimento = dataNascimento;
+		this.pessoa = pessoa;
 		this.bio = bio;
-		this.endereco = endereco;
 		this.ativo = ativo;
+		this.diploma = diploma;
+		this.statusVerificacao = statusVerificacao;
+		this.valorHoraAula = valorHoraAula;
 	}
 
 	public UUID getId() { return id; }
 	public void setId(UUID id) { this.id = id; }
-	public UUID getAuthUserId() { return authUserId; }
-	public void setAuthUserId(UUID authUserId) { this.authUserId = authUserId; }
-	public String getNome() { return nome; }
-	public void setNome(String nome) { this.nome = nome; }
-	public String getSobrenome() { return sobrenome; }
-	public void setSobrenome(String sobrenome) { this.sobrenome = sobrenome; }
-	public String getCpf() { return cpf; }
-	public void setCpf(String cpf) { this.cpf = cpf; }
-	public LocalDate getDataNascimento() { return dataNascimento; }
-	public void setDataNascimento(LocalDate dataNascimento) { this.dataNascimento = dataNascimento; }
+	public Pessoa getPessoa() { return pessoa; }
+	public void setPessoa(Pessoa pessoa) { this.pessoa = pessoa; }
+	public UUID getAuthUserId() { return pessoa != null ? pessoa.getAuthUserId() : null; }
+	public void setAuthUserId(UUID authUserId) { ensurePessoa().setAuthUserId(authUserId); }
+	public String getNome() { return pessoa != null ? pessoa.getNome() : null; }
+	public void setNome(String nome) { ensurePessoa().setNome(nome); }
+	public String getSobrenome() { return pessoa != null ? pessoa.getSobrenome() : null; }
+	public void setSobrenome(String sobrenome) { ensurePessoa().setSobrenome(sobrenome); }
+	public java.time.LocalDate getDataNascimento() { return pessoa != null ? pessoa.getDataNascimento() : null; }
+	public void setDataNascimento(java.time.LocalDate dataNascimento) { ensurePessoa().setDataNascimento(dataNascimento); }
+	public String getCpf() { return pessoa != null ? pessoa.getCpf() : null; }
+	public void setCpf(String cpf) { ensurePessoa().setCpf(cpf); }
+	public Endereco getEndereco() { return pessoa != null ? pessoa.getEndereco() : null; }
+	public void setEndereco(Endereco endereco) { ensurePessoa().setEndereco(endereco); }
+	public String getDiploma() { return diploma; }
+	public void setDiploma(String diploma) { this.diploma = diploma; }
+	public String getStatusVerificacao() { return statusVerificacao; }
+	public void setStatusVerificacao(String statusVerificacao) { this.statusVerificacao = statusVerificacao; }
+	public java.math.BigDecimal getValorHoraAula() { return valorHoraAula; }
+	public void setValorHoraAula(java.math.BigDecimal valorHoraAula) { this.valorHoraAula = valorHoraAula; }
 	public String getBio() { return bio; }
 	public void setBio(String bio) { this.bio = bio; }
-	public Endereco getEndereco() { return endereco; }
-	public void setEndereco(Endereco endereco) { this.endereco = endereco; }
 	public boolean isAtivo() { return ativo; }
 	public void setAtivo(boolean ativo) { this.ativo = ativo; }
+
+	private Pessoa ensurePessoa() {
+		if (pessoa == null) {
+			pessoa = new Pessoa();
+		}
+		return pessoa;
+	}
 
 	@Override
 	public boolean equals(Object o) {

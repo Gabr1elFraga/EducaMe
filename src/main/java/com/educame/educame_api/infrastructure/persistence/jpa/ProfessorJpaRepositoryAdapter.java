@@ -62,7 +62,9 @@ public class ProfessorJpaRepositoryAdapter implements ProfessorRepository {
 			professor.getSobrenome(),
 			professor.getDataNascimento(),
 			GeneroTipo.NAO_INFORMADO,
-			professor.getEndereco() != null ? professor.getEndereco().getId() : null
+			professor.getEndereco() != null ? professor.getEndereco().getId() : null,
+			professor.getCpf(),
+			professor.getPessoa() != null ? professor.getPessoa().getFotoPerfil() : null
 		);
 
 		if (entity.getPessoa() == null) {

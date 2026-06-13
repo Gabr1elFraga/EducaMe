@@ -2,6 +2,7 @@ package com.educame.educame_api.presentation.controller;
 
 import com.educame.educame_api.application.dto.aluno.AlunoResponse;
 import com.educame.educame_api.application.dto.autenticacao.CadastroAlunoRequest;
+import com.educame.educame_api.application.dto.autenticacao.CadastroPessoaRequest;
 import com.educame.educame_api.application.dto.autenticacao.CadastroProfessorRequest;
 import com.educame.educame_api.application.dto.professor.ProfessorResponse;
 import com.educame.educame_api.application.usecase.autenticacao.AutenticacaoUseCase;
@@ -45,6 +46,16 @@ public class AutenticacaoController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(autenticacaoUseCase.cadastrarProfessor(request));
 	}
 
+	@PostMapping("/pessoas")
+	public ResponseEntity<Void> cadastrarPessoa(
+		@Valid @RequestBody CadastroPessoaRequest request,
+		@AuthenticationPrincipal Jwt jwt
+	) {
+		ensureJwtPresent(jwt);
+		autenticacaoUseCase.cadastrarPessoa(request, UUID.fromString(jwt.getSubject()));
+		return ResponseEntity.status(HttpStatus.CREATED).build();
+	}
+
 	private void ensureJwtMatchesRequest(Jwt jwt, UUID authUserId) {
 		if (jwt == null || jwt.getSubject() == null || authUserId == null) {
 			return;
@@ -52,6 +63,12 @@ public class AutenticacaoController {
 
 		if (!jwt.getSubject().equals(authUserId.toString())) {
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "O token nao corresponde ao usuario informado.");
+		}
+	}
+
+	private void ensureJwtPresent(Jwt jwt) {
+		if (jwt == null || jwt.getSubject() == null) {
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "O usuario autenticado e obrigatorio.");
 		}
 	}
 }

@@ -2,13 +2,16 @@ package com.educame.educame_api.application.usecase.autenticacao;
 
 import com.educame.educame_api.application.dto.aluno.AlunoResponse;
 import com.educame.educame_api.application.dto.autenticacao.CadastroAlunoRequest;
+import com.educame.educame_api.application.dto.autenticacao.CadastroPessoaRequest;
 import com.educame.educame_api.application.dto.autenticacao.CadastroProfessorRequest;
 import com.educame.educame_api.application.dto.professor.ProfessorResponse;
 import com.educame.educame_api.application.mapper.DomainEntityMapper;
 import com.educame.educame_api.domain.aluno.Aluno;
 import com.educame.educame_api.domain.contract.ProfileCadastroRepository;
 import com.educame.educame_api.domain.enums.GeneroTipo;
+import com.educame.educame_api.domain.pessoa.Pessoa;
 import com.educame.educame_api.domain.professor.Professor;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -56,6 +59,31 @@ public class AutenticacaoUseCase {
 		professor.setAtivo(true);
 
 		return domainEntityMapper.toResponse(profileCadastroRepository.saveProfessor(professor));
+	}
+
+	@Transactional
+	public void cadastrarPessoa(CadastroPessoaRequest request, UUID authUserId) {
+		var resolvedAuthUserId = requireAuthUserId(authUserId);
+
+		var pessoa = new Pessoa();
+		pessoa.setAuthUserId(resolvedAuthUserId);
+		pessoa.setNome(request.nome().trim());
+		pessoa.setSobrenome(request.sobrenome().trim());
+		pessoa.setDataNascimento(request.dataNascimento());
+		pessoa.setGenero(GeneroTipo.NAO_INFORMADO);
+
+		var aluno = new Aluno();
+		aluno.setPessoa(pessoa);
+		profileCadastroRepository.saveAluno(aluno);
+
+		var professor = new Professor();
+		professor.setPessoa(pessoa);
+		professor.setBio(null);
+		professor.setAtivo(true);
+		professor.setDiploma(null);
+		professor.setStatusVerificacao("PENDENTE");
+		professor.setValorHoraAula(null);
+		profileCadastroRepository.saveProfessor(professor);
 	}
 
 	private UUID requireAuthUserId(UUID authUserId) {

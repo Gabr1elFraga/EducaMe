@@ -1,68 +1,109 @@
 <div class="shell">
-  <aside class="sidebar app-surface">
-    <div class="brand">
+  <mat-toolbar class="topbar app-surface">
+    <div class="topbar-brand">
       <div class="brand-mark">E</div>
-      <div>
+      <div class="brand-copy">
         <div class="brand-name">EducaMe</div>
         <div class="brand-subtitle">Plataforma de ensino</div>
       </div>
     </div>
 
-    <mat-nav-list class="nav-list">
-      <a
-        mat-list-item
-        class="nav-item"
-        *ngFor="let item of navItems"
-        [href]="'#' + item.fragment"
+    <div class="nav-search-container">
+      <div class="search-input-wrapper">
+        <mat-icon class="material-symbols-rounded icon-search" aria-hidden="true">search</mat-icon>
+        <input
+          type="text"
+          [formControl]="searchControl"
+          placeholder="Buscar aulas"
+          aria-label="Buscar aulas"
+        />
+      </div>
+
+      <span class="search-divider" aria-hidden="true"></span>
+
+      <div class="location-input-wrapper">
+        <mat-icon class="material-symbols-rounded icon-location" aria-hidden="true">location_on</mat-icon>
+        <select [formControl]="stateControl" aria-label="Filtrar por estado">
+          <option value="Todos os estados">Todos os estados</option>
+          <option *ngFor="let state of brazilStates" [value]="state.value">{{ state.label }}</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="topbar-actions" *ngIf="authService.currentUser as user">
+      <button
+        mat-stroked-button
+        color="primary"
+        class="user-chip"
+        type="button"
+        [matMenuTriggerFor]="profileMenu"
       >
-        <span>{{ item.label }}</span>
-      </a>
-    </mat-nav-list>
+        <strong class="user-name">{{ userFirstName }}</strong>
+        <span class="user-avatar" aria-hidden="true">{{ userInitial }}</span>
+      </button>
 
-    <mat-card class="sidebar-card">
-      <p class="eyebrow">Arquitetura</p>
-      <h2>Interface branca, moderna e consistente</h2>
-      <p>
-        O frontend usa Angular Material, tipografia do Google Fonts e um tema
-        claro para reforçar a legibilidade em todas as telas.
-      </p>
-      <div class="pill-row">
-        <span class="pill">Material</span>
-        <span class="pill">Responsive</span>
-        <span class="pill">Blue Accent</span>
-      </div>
-    </mat-card>
-  </aside>
-
-  <div class="workspace">
-    <mat-toolbar class="topbar app-surface">
-      <div class="toolbar-copy">
-        <p class="eyebrow">Frontend Angular</p>
-        <h1>Painel inicial da EducaMe</h1>
-      </div>
-
-      <div class="topbar-actions">
-        <div class="status-chip">
-          <span class="status-dot"></span>
-          <span>Conectado ao backend</span>
-        </div>
-
-        <button
-          mat-stroked-button
-          color="primary"
-          class="user-chip"
-          *ngIf="authService.currentUser as user"
-          type="button"
-          (click)="logout()"
-        >
-          <span class="user-email">{{ user.email }}</span>
-          <mat-icon class="material-symbols-rounded" aria-hidden="true">logout</mat-icon>
+      <mat-menu #profileMenu="matMenu" class="profile-menu">
+        <button mat-menu-item type="button" (click)="openUserAction('perfil')">
+          <mat-icon class="material-symbols-rounded">person</mat-icon>
+          <span>Seu perfil</span>
         </button>
-      </div>
-    </mat-toolbar>
+        <button mat-menu-item type="button" (click)="openUserAction('professor')">
+          <mat-icon class="material-symbols-rounded">school</mat-icon>
+          <span>Perfil professor</span>
+        </button>
+        <button mat-menu-item type="button" (click)="openUserAction('historico')">
+          <mat-icon class="material-symbols-rounded">history</mat-icon>
+          <span>Historico de aulas</span>
+        </button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item type="button" class="danger-item" (click)="logout()">
+          <mat-icon class="material-symbols-rounded">logout</mat-icon>
+          <span>Sair</span>
+        </button>
+      </mat-menu>
+    </div>
+  </mat-toolbar>
 
-    <main class="content">
-      <router-outlet />
-    </main>
+  <div class="body-layout">
+    <aside class="sidebar app-surface">
+      <div class="brand">
+        <div class="brand-mark">E</div>
+        <div>
+          <div class="brand-name">EducaMe</div>
+          <div class="brand-subtitle">Plataforma de ensino</div>
+        </div>
+      </div>
+
+      <mat-nav-list class="nav-list">
+        <a
+          mat-list-item
+          class="nav-item"
+          *ngFor="let item of navItems"
+          [href]="'#' + item.fragment"
+        >
+          <span>{{ item.label }}</span>
+        </a>
+      </mat-nav-list>
+
+      <mat-card class="sidebar-card">
+        <p class="eyebrow">Arquitetura</p>
+        <h2>Interface branca, moderna e consistente</h2>
+        <p>
+          O frontend usa Angular Material, tipografia do Google Fonts e um tema
+          claro para reforcar a legibilidade em todas as telas.
+        </p>
+        <div class="pill-row">
+          <span class="pill">Material</span>
+          <span class="pill">Responsive</span>
+          <span class="pill">Blue Accent</span>
+        </div>
+      </mat-card>
+    </aside>
+
+    <div class="workspace">
+      <main class="content">
+        <router-outlet />
+      </main>
+    </div>
   </div>
 </div>
