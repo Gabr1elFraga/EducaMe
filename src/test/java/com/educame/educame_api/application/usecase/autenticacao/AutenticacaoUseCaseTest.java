@@ -130,6 +130,17 @@ class AutenticacaoUseCaseTest {
 		}
 
 		@Override
+		public Professor ensureProfessorByAuthUserId(UUID authUserId, Professor professorFallback) {
+			return findProfessorByAuthUserId(authUserId).orElseGet(() -> {
+				var professor = new Professor();
+				professor.setAuthUserId(authUserId);
+				professor.setAtivo(true);
+				professor.setStatusVerificacao("PENDENTE");
+				return saveProfessor(professor);
+			});
+		}
+
+		@Override
 		public Aluno saveAluno(Aluno aluno) {
 			savedAluno = aluno;
 			if (aluno.getId() == null) {
@@ -150,6 +161,12 @@ class AutenticacaoUseCaseTest {
 			if (professor.getEndereco() == null) {
 				professor.setEndereco(new Endereco());
 			}
+			return professor;
+		}
+
+		@Override
+		public Professor updateProfessorProfile(Professor professor) {
+			savedProfessor = professor;
 			return professor;
 		}
 	}
