@@ -1,6 +1,7 @@
 package com.educame.educame_api.application.dto.professor;
 
 import java.time.LocalDate;
+import java.math.BigDecimal;
 import java.util.UUID;
 
 public record ProfessorResponse(
@@ -12,6 +13,9 @@ public record ProfessorResponse(
 	LocalDate dataNascimento,
 	String bio,
 	boolean ativo,
+	String diploma,
+	String statusVerificacao,
+	BigDecimal valorHoraAula,
 	EnderecoResponse endereco
 ) {
 	public record EnderecoResponse(

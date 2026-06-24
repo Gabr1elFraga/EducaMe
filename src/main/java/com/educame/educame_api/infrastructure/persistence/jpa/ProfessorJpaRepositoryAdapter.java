@@ -84,7 +84,21 @@ public class ProfessorJpaRepositoryAdapter implements ProfessorRepository {
 		entity.setCpf(professor.getCpf());
 		entity.setBio(professor.getBio());
 		entity.setAtivo(professor.isAtivo());
+		entity.setDiploma(professor.getDiploma());
+		entity.setStatusVerificacao(professor.getStatusVerificacao() != null ? professor.getStatusVerificacao() : "PENDENTE");
+		entity.setValorHoraAula(professor.getValorHoraAula());
 
+		return domainEntityMapper.toDomain(professorJpaRepository.save(entity));
+	}
+
+	@Override
+	public Professor updateProfile(Professor professor) {
+		var entity = professorJpaRepository.findById(professor.getId())
+			.orElseThrow(() -> new IllegalArgumentException("Professor nao encontrado."));
+		entity.setBio(professor.getBio());
+		entity.setAtivo(professor.isAtivo());
+		entity.setDiploma(professor.getDiploma());
+		entity.setValorHoraAula(professor.getValorHoraAula());
 		return domainEntityMapper.toDomain(professorJpaRepository.save(entity));
 	}
 

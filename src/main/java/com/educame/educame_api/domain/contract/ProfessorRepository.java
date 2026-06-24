@@ -15,6 +15,8 @@ public interface ProfessorRepository {
 
 	Professor save(Professor professor);
 
+	Professor updateProfile(Professor professor);
+
 	boolean existsById(UUID id);
 
 	void deleteById(UUID id);
