@@ -17,7 +17,15 @@ export const routes: Routes = [
     children: [
       {
         path: '',
+        pathMatch: 'full',
         component: DashboardPageComponent,
+      },
+      {
+        path: 'perfil-professor',
+        loadComponent: () =>
+          import('./features/professor-profile/professor-profile.page').then(
+            (module) => module.ProfessorProfilePageComponent,
+          ),
       },
     ],
   },

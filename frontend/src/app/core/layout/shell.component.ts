@@ -104,6 +104,11 @@ export class ShellComponent {
   }
 
   openUserAction(action: 'perfil' | 'professor' | 'historico'): void {
+    if (action === 'professor') {
+      void this.router.navigate(['/perfil-professor']);
+      return;
+    }
+
     console.log('Menu do usuario:', action);
   }
 }

@@ -1,0 +1,155 @@
+<ng-container *ngIf="loading">
+  <mat-card class="state-card app-surface">
+    <mat-progress-spinner diameter="44" mode="indeterminate"></mat-progress-spinner>
+    <div>
+      <p class="eyebrow">Perfil professor</p>
+      <h3>Carregando perfil</h3>
+      <p>Buscando os dados profissionais vinculados ao seu usuario.</p>
+    </div>
+  </mat-card>
+</ng-container>
+
+<ng-container *ngIf="!loading && errorMessage && !profile">
+  <mat-card class="state-card state-error app-surface">
+    <mat-icon class="material-symbols-rounded" aria-hidden="true">error</mat-icon>
+    <div>
+      <p class="eyebrow">Erro</p>
+      <h3>Nao foi possivel abrir o perfil</h3>
+      <p>{{ errorMessage }}</p>
+      <button mat-stroked-button color="primary" type="button" (click)="loadProfile()">
+        Tentar novamente
+      </button>
+    </div>
+  </mat-card>
+</ng-container>
+
+<section class="profile-page" *ngIf="!loading && profile">
+  <header class="page-header">
+    <div class="identity">
+      <span class="avatar" aria-hidden="true">{{ initials }}</span>
+      <div>
+        <p class="eyebrow">Professor</p>
+        <h2>{{ fullName }}</h2>
+        <span class="status" [attr.data-active]="profile.ativo">
+          {{ profile.ativo ? 'Ativo' : 'Inativo' }}
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <div class="profile-grid">
+    <mat-card class="section-card app-surface">
+      <div class="card-head">
+        <div>
+          <p class="eyebrow">Editar</p>
+          <h3>Dados da tabela professores</h3>
+        </div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <form class="profile-form" [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+        <div class="field-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Diploma</mat-label>
+            <mat-icon matPrefix class="material-symbols-rounded" aria-hidden="true">workspace_premium</mat-icon>
+            <input
+              matInput
+              type="text"
+              formControlName="diploma"
+              placeholder="Ex: Licenciatura em Matematica"
+            />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Valor da hora aula</mat-label>
+            <mat-icon matPrefix class="material-symbols-rounded" aria-hidden="true">payments</mat-icon>
+            <input
+              matInput
+              type="number"
+              min="0"
+              step="0.01"
+              formControlName="valorHoraAula"
+              placeholder="0,00"
+            />
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Bio</mat-label>
+          <mat-icon matPrefix class="material-symbols-rounded" aria-hidden="true">edit_note</mat-icon>
+          <textarea
+            matInput
+            rows="8"
+            formControlName="bio"
+            placeholder="Apresente sua experiencia, metodologia e areas de ensino."
+          ></textarea>
+          <mat-hint align="end">{{ profileForm.controls.bio.value.length }}/4000</mat-hint>
+        </mat-form-field>
+
+        <div class="toggle-row">
+          <div>
+            <strong>Status do perfil</strong>
+            <p>Define se o professor fica ativo na plataforma.</p>
+          </div>
+
+          <mat-slide-toggle color="primary" formControlName="ativo">
+            {{ profileForm.controls.ativo.value ? 'Ativo' : 'Inativo' }}
+          </mat-slide-toggle>
+        </div>
+
+        <div class="feedback success" *ngIf="successMessage">{{ successMessage }}</div>
+        <div class="feedback error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+        <div class="actions">
+          <button mat-stroked-button color="primary" type="button" (click)="loadProfile()" [disabled]="saving">
+            Recarregar
+          </button>
+          <button mat-flat-button color="primary" type="submit" [disabled]="saving">
+            <mat-icon class="material-symbols-rounded" aria-hidden="true">save</mat-icon>
+            <span>{{ saving ? 'Salvando...' : 'Salvar' }}</span>
+          </button>
+        </div>
+      </form>
+    </mat-card>
+
+    <mat-card class="section-card app-surface">
+      <div class="card-head">
+        <div>
+          <p class="eyebrow">Leitura</p>
+          <h3>Dados pessoais</h3>
+        </div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <dl class="info-list">
+        <div>
+          <dt>Nome completo</dt>
+          <dd>{{ profile.nome }} {{ profile.sobrenome }}</dd>
+        </div>
+        <div>
+          <dt>CPF</dt>
+          <dd>{{ profile.cpf || 'Nao informado' }}</dd>
+        </div>
+        <div>
+          <dt>Data de nascimento</dt>
+          <dd>{{ profile.dataNascimento | date: 'dd/MM/yyyy' }}</dd>
+        </div>
+        <div>
+          <dt>Endereco</dt>
+          <dd *ngIf="profile.endereco; else noAddress">
+            {{ profile.endereco.rua }}, {{ profile.endereco.numero }} - {{ profile.endereco.cidade }}/{{ profile.endereco.estado }}
+          </dd>
+          <ng-template #noAddress>
+            <dd>Nao informado</dd>
+          </ng-template>
+        </div>
+        <div>
+          <dt>Status de verificacao</dt>
+          <dd>{{ profile.statusVerificacao || 'PENDENTE' }}</dd>
+        </div>
+      </dl>
+    </mat-card>
+  </div>
+</section>
