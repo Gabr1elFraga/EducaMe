@@ -8,6 +8,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
@@ -20,6 +21,12 @@ public class ProfessorEntity extends BaseJpaEntity {
 	private String bio;
 	@Column(nullable = false)
 	private boolean ativo = true;
+	@Column(columnDefinition = "text")
+	private String diploma;
+	@Column(name = "status_verificacao", nullable = false)
+	private String statusVerificacao = "PENDENTE";
+	@Column(name = "valor_hora_aula")
+	private BigDecimal valorHoraAula;
 
 	public PessoaEntity getPessoa() {
 		return pessoa;
@@ -83,6 +90,12 @@ public class ProfessorEntity extends BaseJpaEntity {
 	public void setBio(String bio) { this.bio = bio; }
 	public boolean isAtivo() { return ativo; }
 	public void setAtivo(boolean ativo) { this.ativo = ativo; }
+	public String getDiploma() { return diploma; }
+	public void setDiploma(String diploma) { this.diploma = diploma; }
+	public String getStatusVerificacao() { return statusVerificacao; }
+	public void setStatusVerificacao(String statusVerificacao) { this.statusVerificacao = statusVerificacao; }
+	public BigDecimal getValorHoraAula() { return valorHoraAula; }
+	public void setValorHoraAula(BigDecimal valorHoraAula) { this.valorHoraAula = valorHoraAula; }
 
 	private PessoaEntity ensurePessoa() {
 		if (pessoa == null) {

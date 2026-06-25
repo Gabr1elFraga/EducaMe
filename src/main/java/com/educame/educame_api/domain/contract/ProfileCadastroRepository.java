@@ -11,7 +11,11 @@ public interface ProfileCadastroRepository {
 
 	Optional<Professor> findProfessorByAuthUserId(UUID authUserId);
 
+	Professor ensureProfessorByAuthUserId(UUID authUserId, Professor professorFallback);
+
 	Aluno saveAluno(Aluno aluno);
 
 	Professor saveProfessor(Professor professor);
+
+	Professor updateProfessorProfile(Professor professor);
 }

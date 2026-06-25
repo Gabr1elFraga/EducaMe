@@ -14,10 +14,16 @@ import java.util.UUID;
 public class LocalProfileCadastroRepository implements ProfileCadastroRepository {
 	private final AlunoRepository alunoRepository;
 	private final ProfessorRepository professorRepository;
+	private final PessoaJdbcRepository pessoaJdbcRepository;
 
-	public LocalProfileCadastroRepository(AlunoRepository alunoRepository, ProfessorRepository professorRepository) {
+	public LocalProfileCadastroRepository(
+		AlunoRepository alunoRepository,
+		ProfessorRepository professorRepository,
+		PessoaJdbcRepository pessoaJdbcRepository
+	) {
 		this.alunoRepository = alunoRepository;
 		this.professorRepository = professorRepository;
+		this.pessoaJdbcRepository = pessoaJdbcRepository;
 	}
 
 	@Override
@@ -31,6 +37,33 @@ public class LocalProfileCadastroRepository implements ProfileCadastroRepository
 	}
 
 	@Override
+	public Professor ensureProfessorByAuthUserId(UUID authUserId, Professor professorFallback) {
+		return findProfessorByAuthUserId(authUserId).orElseGet(() -> {
+			var pessoa = pessoaJdbcRepository.findByAuthUserId(authUserId).orElseGet(() -> {
+				if (professorFallback == null || professorFallback.getPessoa() == null) {
+					throw new IllegalArgumentException("Pessoa nao encontrada.");
+				}
+
+				var fallbackPessoa = professorFallback.getPessoa();
+				fallbackPessoa.setId(pessoaJdbcRepository.ensureMinimalPessoa(
+					authUserId,
+					fallbackPessoa.getNome(),
+					fallbackPessoa.getSobrenome(),
+					fallbackPessoa.getDataNascimento(),
+					fallbackPessoa.getGenero()
+				));
+				return fallbackPessoa;
+			});
+			var professor = new Professor();
+			professor.setPessoa(pessoa);
+			professor.setBio(null);
+			professor.setAtivo(true);
+			professor.setStatusVerificacao("PENDENTE");
+			return professorRepository.save(professor);
+		});
+	}
+
+	@Override
 	public Aluno saveAluno(Aluno aluno) {
 		return alunoRepository.save(aluno);
 	}
@@ -38,5 +71,10 @@ public class LocalProfileCadastroRepository implements ProfileCadastroRepository
 	@Override
 	public Professor saveProfessor(Professor professor) {
 		return professorRepository.save(professor);
+	}
+
+	@Override
+	public Professor updateProfessorProfile(Professor professor) {
+		return professorRepository.updateProfile(professor);
 	}
 }
