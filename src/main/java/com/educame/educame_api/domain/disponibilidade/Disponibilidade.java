@@ -1,5 +1,6 @@
 package com.educame.educame_api.domain.disponibilidade;
 
+import com.educame.educame_api.domain.anuncio.AnuncioAula;
 import com.educame.educame_api.domain.enums.DisponibilidadeStatus;
 import com.educame.educame_api.domain.professor.Professor;
 
@@ -9,6 +10,7 @@ import java.util.UUID;
 
 public class Disponibilidade {
 	private UUID id;
+	private AnuncioAula anuncio;
 	private Professor professor;
 	private OffsetDateTime inicio;
 	private OffsetDateTime fim;
@@ -18,8 +20,9 @@ public class Disponibilidade {
 	public Disponibilidade() {
 	}
 
-	public Disponibilidade(UUID id, Professor professor, OffsetDateTime inicio, OffsetDateTime fim, DisponibilidadeStatus status, String observacao) {
+	public Disponibilidade(UUID id, AnuncioAula anuncio, Professor professor, OffsetDateTime inicio, OffsetDateTime fim, DisponibilidadeStatus status, String observacao) {
 		this.id = id;
+		this.anuncio = anuncio;
 		this.professor = professor;
 		this.inicio = inicio;
 		this.fim = fim;
@@ -29,6 +32,8 @@ public class Disponibilidade {
 
 	public UUID getId() { return id; }
 	public void setId(UUID id) { this.id = id; }
+	public AnuncioAula getAnuncio() { return anuncio; }
+	public void setAnuncio(AnuncioAula anuncio) { this.anuncio = anuncio; }
 	public Professor getProfessor() { return professor; }
 	public void setProfessor(Professor professor) { this.professor = professor; }
 	public OffsetDateTime getInicio() { return inicio; }

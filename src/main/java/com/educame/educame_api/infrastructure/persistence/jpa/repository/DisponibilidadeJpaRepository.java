@@ -8,4 +8,5 @@ import java.util.UUID;
 
 public interface DisponibilidadeJpaRepository extends JpaRepository<DisponibilidadeEntity, UUID> {
 	List<DisponibilidadeEntity> findByProfessor_Id(UUID professorId);
+	List<DisponibilidadeEntity> findByAnuncio_IdOrderByInicioAsc(UUID anuncioId);
 }
