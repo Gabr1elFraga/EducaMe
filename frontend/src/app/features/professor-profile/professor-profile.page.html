@@ -2,112 +2,109 @@
   <mat-card class="state-card app-surface">
     <mat-progress-spinner diameter="44" mode="indeterminate"></mat-progress-spinner>
     <div>
-      <p class="eyebrow">Perfil professor</p>
-      <h3>Carregando perfil</h3>
-      <p>Buscando os dados profissionais vinculados ao seu usuario.</p>
+      <p class="eyebrow">Meus anuncios</p>
+      <h3>Carregando anuncios</h3>
+      <p>Buscando suas materias, valores e horarios disponiveis.</p>
     </div>
   </mat-card>
 </ng-container>
 
-<ng-container *ngIf="!loading && errorMessage && !profile">
-  <mat-card class="state-card state-error app-surface">
-    <mat-icon class="material-symbols-rounded" aria-hidden="true">error</mat-icon>
-    <div>
-      <p class="eyebrow">Erro</p>
-      <h3>Nao foi possivel abrir o perfil</h3>
-      <p>{{ errorMessage }}</p>
-      <button mat-stroked-button color="primary" type="button" (click)="loadProfile()">
-        Tentar novamente
-      </button>
-    </div>
-  </mat-card>
-</ng-container>
-
-<section class="profile-page" *ngIf="!loading && profile">
+<section class="ads-page" *ngIf="!loading">
   <header class="page-header">
-    <div class="identity">
-      <span class="avatar" aria-hidden="true">{{ initials }}</span>
+    <div>
+      <p class="eyebrow">Professor</p>
+      <h2>Meus anuncios</h2>
+    </div>
+
+    <div class="header-stats">
       <div>
-        <p class="eyebrow">Professor</p>
-        <h2>{{ fullName }}</h2>
-        <span class="status" [attr.data-active]="profile.ativo">
-          {{ profile.ativo ? 'Ativo' : 'Inativo' }}
-        </span>
+        <strong>{{ ads.length }}</strong>
+        <span>Total</span>
+      </div>
+      <div>
+        <strong>{{ activeAdsCount }}</strong>
+        <span>Ativos</span>
       </div>
     </div>
   </header>
 
-  <div class="profile-grid">
+  <div class="feedback success" *ngIf="successMessage">{{ successMessage }}</div>
+  <div class="feedback error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+  <div class="ads-grid">
     <mat-card class="section-card app-surface">
       <div class="card-head">
         <div>
-          <p class="eyebrow">Editar</p>
-          <h3>Dados da tabela professores</h3>
+          <p class="eyebrow">{{ editingAdId ? 'Editar' : 'Novo' }}</p>
+          <h3>Anuncio</h3>
         </div>
+        <button mat-stroked-button color="primary" type="button" (click)="newAd()">
+          <mat-icon class="material-symbols-rounded" aria-hidden="true">add</mat-icon>
+          <span>Novo</span>
+        </button>
       </div>
 
       <mat-divider></mat-divider>
 
-      <form class="profile-form" [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+      <form class="ad-form" [formGroup]="adForm" (ngSubmit)="saveAd()">
+        <mat-form-field appearance="outline">
+          <mat-label>Materia</mat-label>
+          <mat-select formControlName="disciplinaId">
+            <mat-option *ngFor="let disciplina of disciplinas; trackBy: trackById" [value]="disciplina.id">
+              {{ disciplina.nome }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Titulo</mat-label>
+          <mat-icon matPrefix class="material-symbols-rounded" aria-hidden="true">campaign</mat-icon>
+          <input matInput type="text" formControlName="titulo" placeholder="Ex: Matematica para ENEM" />
+        </mat-form-field>
+
         <div class="field-grid">
           <mat-form-field appearance="outline">
-            <mat-label>Diploma</mat-label>
-            <mat-icon matPrefix class="material-symbols-rounded" aria-hidden="true">workspace_premium</mat-icon>
-            <input
-              matInput
-              type="text"
-              formControlName="diploma"
-              placeholder="Ex: Licenciatura em Matematica"
-            />
+            <mat-label>Valor por hora</mat-label>
+            <mat-icon matPrefix class="material-symbols-rounded" aria-hidden="true">payments</mat-icon>
+            <input matInput type="number" min="0" step="0.01" formControlName="valorHora" />
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Valor da hora aula</mat-label>
-            <mat-icon matPrefix class="material-symbols-rounded" aria-hidden="true">payments</mat-icon>
-            <input
-              matInput
-              type="number"
-              min="0"
-              step="0.01"
-              formControlName="valorHoraAula"
-              placeholder="0,00"
-            />
+            <mat-label>Modalidade</mat-label>
+            <mat-select formControlName="modalidade">
+              <mat-option value="online">Online</mat-option>
+              <mat-option value="presencial">Presencial</mat-option>
+              <mat-option value="hibrido">Hibrido</mat-option>
+            </mat-select>
           </mat-form-field>
         </div>
 
         <mat-form-field appearance="outline">
-          <mat-label>Bio</mat-label>
+          <mat-label>Descricao</mat-label>
           <mat-icon matPrefix class="material-symbols-rounded" aria-hidden="true">edit_note</mat-icon>
           <textarea
             matInput
-            rows="8"
-            formControlName="bio"
-            placeholder="Apresente sua experiencia, metodologia e areas de ensino."
+            rows="7"
+            formControlName="descricao"
+            placeholder="Descreva o conteudo, metodologia e publico indicado."
           ></textarea>
-          <mat-hint align="end">{{ profileForm.controls.bio.value.length }}/4000</mat-hint>
+          <mat-hint align="end">{{ adForm.controls.descricao.value.length }}/4000</mat-hint>
         </mat-form-field>
 
         <div class="toggle-row">
           <div>
-            <strong>Status do perfil</strong>
-            <p>Define se o professor fica ativo na plataforma.</p>
+            <strong>Status do anuncio</strong>
+            <p>Controla se o anuncio aparece como disponivel para novas aulas.</p>
           </div>
-
           <mat-slide-toggle color="primary" formControlName="ativo">
-            {{ profileForm.controls.ativo.value ? 'Ativo' : 'Inativo' }}
+            {{ adForm.controls.ativo.value ? 'Ativo' : 'Inativo' }}
           </mat-slide-toggle>
         </div>
 
-        <div class="feedback success" *ngIf="successMessage">{{ successMessage }}</div>
-        <div class="feedback error" *ngIf="errorMessage">{{ errorMessage }}</div>
-
         <div class="actions">
-          <button mat-stroked-button color="primary" type="button" (click)="loadProfile()" [disabled]="saving">
-            Recarregar
-          </button>
-          <button mat-flat-button color="primary" type="submit" [disabled]="saving">
+          <button mat-flat-button color="primary" type="submit" [disabled]="savingAd">
             <mat-icon class="material-symbols-rounded" aria-hidden="true">save</mat-icon>
-            <span>{{ saving ? 'Salvando...' : 'Salvar' }}</span>
+            <span>{{ savingAd ? 'Salvando...' : 'Salvar anuncio' }}</span>
           </button>
         </div>
       </form>
@@ -116,40 +113,110 @@
     <mat-card class="section-card app-surface">
       <div class="card-head">
         <div>
-          <p class="eyebrow">Leitura</p>
-          <h3>Dados pessoais</h3>
+          <p class="eyebrow">Horarios</p>
+          <h3>{{ selectedAd?.titulo || 'Selecione um anuncio' }}</h3>
         </div>
       </div>
 
       <mat-divider></mat-divider>
 
-      <dl class="info-list">
-        <div>
-          <dt>Nome completo</dt>
-          <dd>{{ profile.nome }} {{ profile.sobrenome }}</dd>
+      <form class="availability-form" [formGroup]="availabilityForm" (ngSubmit)="addAvailability()">
+        <div class="field-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Inicio</mat-label>
+            <input matInput type="datetime-local" formControlName="inicio" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Fim</mat-label>
+            <input matInput type="datetime-local" formControlName="fim" />
+          </mat-form-field>
         </div>
-        <div>
-          <dt>CPF</dt>
-          <dd>{{ profile.cpf || 'Nao informado' }}</dd>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Observacao</mat-label>
+          <input matInput type="text" formControlName="observacao" placeholder="Opcional" />
+        </mat-form-field>
+
+        <div class="actions">
+          <button mat-stroked-button color="primary" type="submit" [disabled]="savingAvailability || !selectedAd">
+            <mat-icon class="material-symbols-rounded" aria-hidden="true">schedule</mat-icon>
+            <span>{{ savingAvailability ? 'Cadastrando...' : 'Cadastrar horario' }}</span>
+          </button>
         </div>
-        <div>
-          <dt>Data de nascimento</dt>
-          <dd>{{ profile.dataNascimento | date: 'dd/MM/yyyy' }}</dd>
+      </form>
+
+      <div class="availability-list" *ngIf="selectedAd as ad">
+        <div class="availability-item" *ngFor="let slot of ad.disponibilidades; trackBy: trackById">
+          <div>
+            <strong>{{ slot.inicio | date: 'dd/MM/yyyy HH:mm' }} - {{ slot.fim | date: 'HH:mm' }}</strong>
+            <span>{{ slot.status }}</span>
+            <p *ngIf="slot.observacao">{{ slot.observacao }}</p>
+          </div>
+
+          <button
+            mat-icon-button
+            color="warn"
+            type="button"
+            aria-label="Remover horario"
+            [disabled]="slot.status === 'RESERVADA'"
+            (click)="removeAvailability(slot.id)"
+          >
+            <mat-icon class="material-symbols-rounded">delete</mat-icon>
+          </button>
         </div>
-        <div>
-          <dt>Endereco</dt>
-          <dd *ngIf="profile.endereco; else noAddress">
-            {{ profile.endereco.rua }}, {{ profile.endereco.numero }} - {{ profile.endereco.cidade }}/{{ profile.endereco.estado }}
-          </dd>
-          <ng-template #noAddress>
-            <dd>Nao informado</dd>
-          </ng-template>
-        </div>
-        <div>
-          <dt>Status de verificacao</dt>
-          <dd>{{ profile.statusVerificacao || 'PENDENTE' }}</dd>
-        </div>
-      </dl>
+
+        <p class="empty" *ngIf="ad.disponibilidades.length === 0">
+          Nenhum horario cadastrado para este anuncio.
+        </p>
+      </div>
     </mat-card>
   </div>
+
+  <mat-card class="section-card app-surface">
+    <div class="card-head">
+      <div>
+        <p class="eyebrow">Lista</p>
+        <h3>Anuncios cadastrados</h3>
+      </div>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="ad-list">
+      <button
+        class="ad-item"
+        type="button"
+        *ngFor="let ad of ads; trackBy: trackById"
+        [class.selected]="selectedAd?.id === ad.id"
+        (click)="selectAd(ad)"
+      >
+        <span class="ad-main">
+          <strong>{{ ad.titulo }}</strong>
+          <small>{{ ad.disciplinaNome }} · {{ ad.modalidade }} · R$ {{ ad.valorHora | number: '1.2-2' }}/h</small>
+        </span>
+        <span class="ad-meta">
+          <span class="status" [attr.data-active]="ad.ativo">{{ ad.ativo ? 'Ativo' : 'Inativo' }}</span>
+          <span>{{ ad.disponibilidades.length }} horarios</span>
+        </span>
+        <span class="ad-actions">
+          <button mat-icon-button type="button" aria-label="Editar anuncio" (click)="editAd(ad); $event.stopPropagation()">
+            <mat-icon class="material-symbols-rounded">edit</mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            type="button"
+            [attr.aria-label]="ad.ativo ? 'Desativar anuncio' : 'Ativar anuncio'"
+            (click)="toggleAdStatus(ad); $event.stopPropagation()"
+          >
+            <mat-icon class="material-symbols-rounded">{{ ad.ativo ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+        </span>
+      </button>
+
+      <p class="empty" *ngIf="ads.length === 0">
+        Voce ainda nao cadastrou anuncios.
+      </p>
+    </div>
+  </mat-card>
 </section>

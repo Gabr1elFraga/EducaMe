@@ -103,9 +103,14 @@ export class ShellComponent {
     return (this.userFirstName.charAt(0) || 'E').toUpperCase();
   }
 
-  openUserAction(action: 'perfil' | 'professor' | 'historico'): void {
-    if (action === 'professor') {
-      void this.router.navigate(['/perfil-professor']);
+  openUserAction(action: 'perfil' | 'anuncios' | 'historico'): void {
+    if (action === 'perfil') {
+      void this.router.navigate(['/perfil']);
+      return;
+    }
+
+    if (action === 'anuncios') {
+      void this.router.navigate(['/meus-anuncios']);
       return;
     }
 

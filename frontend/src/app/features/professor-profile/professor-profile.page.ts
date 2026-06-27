@@ -9,9 +9,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { AuthService } from '../../core/services/auth.service';
-import { ProfessorProfile } from './models/professor-profile.model';
+import {
+  AnuncioAula,
+  AnuncioAulaPayload,
+  DisciplinaResumo,
+} from './models/professor-profile.model';
 import { ProfessorProfileService } from './services/professor-profile.service';
 
 @Component({
@@ -27,6 +31,7 @@ import { ProfessorProfileService } from './services/professor-profile.service';
     MatIconModule,
     MatInputModule,
     MatProgressSpinnerModule,
+    MatSelectModule,
     MatSlideToggleModule,
   ],
   templateUrl: './professor-profile.page.html',
@@ -35,169 +40,250 @@ import { ProfessorProfileService } from './services/professor-profile.service';
 export class ProfessorProfilePageComponent implements OnInit {
   private readonly formBuilder = inject(FormBuilder);
 
-  readonly profileForm = this.formBuilder.nonNullable.group({
-    bio: ['', [Validators.maxLength(4000)]],
+  readonly adForm = this.formBuilder.nonNullable.group({
+    disciplinaId: ['', [Validators.required]],
+    titulo: ['', [Validators.required, Validators.maxLength(160)]],
+    descricao: ['', [Validators.maxLength(4000)]],
+    valorHora: [0, [Validators.required, Validators.min(0)]],
+    modalidade: ['online', [Validators.required, Validators.maxLength(40)]],
     ativo: [true],
-    diploma: ['', [Validators.maxLength(1000)]],
-    valorHoraAula: [null as number | null, [Validators.min(0)]],
   });
 
-  profile: ProfessorProfile | null = null;
+  readonly availabilityForm = this.formBuilder.nonNullable.group({
+    inicio: ['', [Validators.required]],
+    fim: ['', [Validators.required]],
+    observacao: ['', [Validators.maxLength(1000)]],
+  });
+
+  disciplinas: DisciplinaResumo[] = [];
+  ads: AnuncioAula[] = [];
+  selectedAd: AnuncioAula | null = null;
+  editingAdId: string | null = null;
   loading = true;
-  saving = false;
+  savingAd = false;
+  savingAvailability = false;
   errorMessage = '';
   successMessage = '';
 
-  constructor(
-    private readonly professorProfileService: ProfessorProfileService,
-    private readonly authService: AuthService,
-  ) {}
+  constructor(private readonly professorProfileService: ProfessorProfileService) {}
 
   ngOnInit(): void {
-    this.loadProfile();
+    this.loadData();
   }
 
-  loadProfile(): void {
+  loadData(): void {
     this.loading = true;
     this.errorMessage = '';
     this.successMessage = '';
 
-    this.professorProfileService.getMyProfile().subscribe({
-      next: (profile) => {
-        this.profile = profile;
-        this.profileForm.patchValue({
-          bio: profile.bio ?? '',
-          ativo: profile.ativo,
-          diploma: profile.diploma ?? '',
-          valorHoraAula: profile.valorHoraAula,
-        });
-        this.loading = false;
+    this.professorProfileService.listDisciplinas().subscribe({
+      next: (disciplinas) => {
+        this.disciplinas = disciplinas;
+        this.loadAds();
       },
-      error: (error: unknown) => {
-        console.error('Falha ao carregar perfil professor', error);
-        this.profile = this.buildDraftProfile();
-        this.profileForm.patchValue({
-          bio: '',
-          ativo: true,
-          diploma: '',
-          valorHoraAula: null,
-        });
+      error: (error) => {
         this.loading = false;
-        this.errorMessage = '';
+        this.errorMessage = this.normalizeError(error, 'Nao foi possivel carregar as disciplinas.');
       },
     });
   }
 
-  saveProfile(): void {
+  loadAds(): void {
+    this.professorProfileService.listMyAds().subscribe({
+      next: (ads) => {
+        this.ads = ads;
+        this.selectedAd = this.selectedAd
+          ? ads.find((ad) => ad.id === this.selectedAd?.id) ?? ads[0] ?? null
+          : ads[0] ?? null;
+        this.loading = false;
+      },
+      error: (error) => {
+        this.loading = false;
+        this.errorMessage = this.normalizeError(error, 'Nao foi possivel carregar seus anuncios.');
+      },
+    });
+  }
+
+  selectAd(ad: AnuncioAula): void {
+    this.selectedAd = ad;
+    this.successMessage = '';
+    this.errorMessage = '';
+  }
+
+  editAd(ad: AnuncioAula): void {
+    this.editingAdId = ad.id;
+    this.selectedAd = ad;
+    this.adForm.patchValue({
+      disciplinaId: ad.disciplinaId,
+      titulo: ad.titulo,
+      descricao: ad.descricao ?? '',
+      valorHora: ad.valorHora,
+      modalidade: ad.modalidade,
+      ativo: ad.ativo,
+    });
+    this.successMessage = '';
+    this.errorMessage = '';
+  }
+
+  newAd(): void {
+    this.editingAdId = null;
+    this.adForm.reset({
+      disciplinaId: this.disciplinas[0]?.id ?? '',
+      titulo: '',
+      descricao: '',
+      valorHora: 0,
+      modalidade: 'online',
+      ativo: true,
+    });
+    this.successMessage = '';
+    this.errorMessage = '';
+  }
+
+  saveAd(): void {
     this.errorMessage = '';
     this.successMessage = '';
 
-    if (this.profileForm.invalid) {
-      this.profileForm.markAllAsTouched();
+    if (this.adForm.invalid) {
+      this.adForm.markAllAsTouched();
       return;
     }
 
-    this.saving = true;
-    const bio = this.profileForm.controls.bio.value.trim();
-    const diploma = this.profileForm.controls.diploma.value.trim();
+    this.savingAd = true;
+    const payload = this.buildAdPayload();
+    const request = this.editingAdId
+      ? this.professorProfileService.updateAd(this.editingAdId, payload)
+      : this.professorProfileService.createAd(payload);
 
-    this.professorProfileService.updateMyProfile({
-      bio: bio.length > 0 ? bio : null,
-      ativo: this.profileForm.controls.ativo.value,
-      diploma: diploma.length > 0 ? diploma : null,
-      valorHoraAula: this.profileForm.controls.valorHoraAula.value,
-    }).subscribe({
-      next: (profile) => {
-        this.profile = profile;
-        this.profileForm.patchValue({
-          bio: profile.bio ?? '',
-          ativo: profile.ativo,
-          diploma: profile.diploma ?? '',
-          valorHoraAula: profile.valorHoraAula,
-        });
-        this.successMessage = 'Perfil do professor atualizado.';
-        this.saving = false;
+    request.subscribe({
+      next: (ad) => {
+        this.upsertAd(ad);
+        this.selectedAd = ad;
+        this.editingAdId = ad.id;
+        this.savingAd = false;
+        this.successMessage = 'Anuncio salvo.';
       },
-      error: (error: unknown) => {
-        this.saving = false;
-        this.errorMessage = this.normalizeError(error);
+      error: (error) => {
+        this.savingAd = false;
+        this.errorMessage = this.normalizeError(error, 'Nao foi possivel salvar o anuncio.');
       },
     });
   }
 
-  get fullName(): string {
-    if (!this.profile) {
-      return 'Professor';
+  toggleAdStatus(ad: AnuncioAula): void {
+    this.professorProfileService.updateAdStatus(ad.id, !ad.ativo).subscribe({
+      next: (updated) => {
+        this.upsertAd(updated);
+        this.selectedAd = updated;
+      },
+      error: (error) => {
+        this.errorMessage = this.normalizeError(error, 'Nao foi possivel alterar o status do anuncio.');
+      },
+    });
+  }
+
+  addAvailability(): void {
+    if (!this.selectedAd) {
+      this.errorMessage = 'Selecione um anuncio antes de cadastrar horario.';
+      return;
     }
 
-    return `${this.profile.nome} ${this.profile.sobrenome}`.trim();
+    this.errorMessage = '';
+    this.successMessage = '';
+
+    if (this.availabilityForm.invalid) {
+      this.availabilityForm.markAllAsTouched();
+      return;
+    }
+
+    const inicio = this.toIsoOffset(this.availabilityForm.controls.inicio.value);
+    const fim = this.toIsoOffset(this.availabilityForm.controls.fim.value);
+
+    if (!inicio || !fim) {
+      this.errorMessage = 'Informe inicio e fim do horario.';
+      return;
+    }
+
+    this.savingAvailability = true;
+    const observacao = this.availabilityForm.controls.observacao.value.trim();
+    this.professorProfileService.addAvailability(this.selectedAd.id, {
+      inicio,
+      fim,
+      observacao: observacao.length > 0 ? observacao : null,
+    }).subscribe({
+      next: (updated) => {
+        this.upsertAd(updated);
+        this.selectedAd = updated;
+        this.availabilityForm.reset({ inicio: '', fim: '', observacao: '' });
+        this.savingAvailability = false;
+        this.successMessage = 'Horario cadastrado.';
+      },
+      error: (error) => {
+        this.savingAvailability = false;
+        this.errorMessage = this.normalizeError(error, 'Nao foi possivel cadastrar o horario.');
+      },
+    });
   }
 
-  get initials(): string {
-    return this.fullName
-      .split(/\s+/)
-      .filter(Boolean)
-      .slice(0, 2)
-      .map((part) => part.charAt(0))
-      .join('')
-      .toUpperCase() || 'P';
+  removeAvailability(availabilityId: string): void {
+    if (!this.selectedAd) {
+      return;
+    }
+
+    this.professorProfileService.removeAvailability(this.selectedAd.id, availabilityId).subscribe({
+      next: (updated) => {
+        this.upsertAd(updated);
+        this.selectedAd = updated;
+        this.successMessage = 'Horario removido.';
+      },
+      error: (error) => {
+        this.errorMessage = this.normalizeError(error, 'Nao foi possivel remover o horario.');
+      },
+    });
   }
 
-  private buildDraftProfile(): ProfessorProfile {
-    const user = this.authService.currentUser;
-    const metadata = user?.user_metadata as Record<string, unknown> | undefined;
-    const fullName = this.resolveMetadataString(metadata, 'full_name', 'name');
-    const nome = this.resolveMetadataString(metadata, 'nome', 'first_name') ?? this.firstFromFullName(fullName);
-    const sobrenome = this.resolveMetadataString(metadata, 'sobrenome', 'last_name') ?? this.lastFromFullName(fullName);
+  get activeAdsCount(): number {
+    return this.ads.filter((ad) => ad.ativo).length;
+  }
 
+  trackById(_: number, item: { id: string }): string {
+    return item.id;
+  }
+
+  private buildAdPayload(): AnuncioAulaPayload {
+    const descricao = this.adForm.controls.descricao.value.trim();
     return {
-      id: '',
-      authUserId: user?.id ?? '',
-      nome: nome ?? user?.email?.split('@')[0] ?? 'Professor',
-      sobrenome: sobrenome ?? '',
-      cpf: '',
-      dataNascimento: this.resolveMetadataString(metadata, 'data_nascimento', 'dataNascimento') ?? '',
-      bio: null,
-      ativo: true,
-      diploma: null,
-      statusVerificacao: 'PENDENTE',
-      valorHoraAula: null,
-      endereco: null,
+      disciplinaId: this.adForm.controls.disciplinaId.value,
+      titulo: this.adForm.controls.titulo.value.trim(),
+      descricao: descricao.length > 0 ? descricao : null,
+      valorHora: Number(this.adForm.controls.valorHora.value),
+      modalidade: this.adForm.controls.modalidade.value.trim(),
+      ativo: this.adForm.controls.ativo.value,
     };
   }
 
-  private resolveMetadataString(
-    metadata: Record<string, unknown> | undefined,
-    ...keys: string[]
-  ): string | null {
-    for (const key of keys) {
-      const value = metadata?.[key];
-
-      if (typeof value === 'string' && value.trim().length > 0) {
-        return value.trim();
-      }
+  private upsertAd(ad: AnuncioAula): void {
+    const index = this.ads.findIndex((item) => item.id === ad.id);
+    if (index >= 0) {
+      this.ads = this.ads.map((item) => item.id === ad.id ? ad : item);
+      return;
     }
 
-    return null;
+    this.ads = [ad, ...this.ads];
   }
 
-  private firstFromFullName(fullName: string | null): string | null {
-    return fullName?.split(/\s+/).filter(Boolean)[0] ?? null;
+  private toIsoOffset(value: string): string | null {
+    if (!value) {
+      return null;
+    }
+
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? null : date.toISOString();
   }
 
-  private lastFromFullName(fullName: string | null): string | null {
-    const parts = fullName?.split(/\s+/).filter(Boolean) ?? [];
-    return parts.length > 1 ? parts.slice(1).join(' ') : null;
-  }
-
-  private normalizeError(error: unknown): string {
+  private normalizeError(error: unknown, fallback: string): string {
     if (error instanceof HttpErrorResponse) {
       if (error.status === 401 || error.status === 403) {
-        return 'Sua sessao nao foi reconhecida pelo backend. Entre novamente e tente abrir o perfil.';
-      }
-
-      if (error.status === 404) {
-        return 'Nao encontramos o cadastro base de pessoa para este usuario.';
+        return 'Sua sessao nao foi reconhecida pelo backend. Entre novamente e tente abrir seus anuncios.';
       }
 
       if (typeof error.error?.message === 'string') {
@@ -213,6 +299,6 @@ export class ProfessorProfilePageComponent implements OnInit {
       return error.message;
     }
 
-    return 'Nao foi possivel carregar o perfil do professor.';
+    return fallback;
   }
 }

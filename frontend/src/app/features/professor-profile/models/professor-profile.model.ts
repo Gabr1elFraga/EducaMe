@@ -1,33 +1,41 @@
-export interface ProfessorEndereco {
+export interface DisciplinaResumo {
   id: string;
-  rua: string;
-  numero: string;
-  complemento: string | null;
-  bairro: string;
-  cidade: string;
-  estado: string;
-  cep: string;
-  pais: string;
-}
-
-export interface ProfessorProfile {
-  id: string;
-  authUserId: string;
   nome: string;
-  sobrenome: string;
-  cpf: string;
-  dataNascimento: string;
-  bio: string | null;
-  ativo: boolean;
-  diploma: string | null;
-  statusVerificacao: string | null;
-  valorHoraAula: number | null;
-  endereco: ProfessorEndereco | null;
+  descricao: string | null;
 }
 
-export interface UpdateProfessorProfilePayload {
-  bio: string | null;
+export interface DisponibilidadeAnuncio {
+  id: string;
+  inicio: string;
+  fim: string;
+  status: 'DISPONIVEL' | 'RESERVADA' | 'BLOQUEADA' | string;
+  observacao: string | null;
+}
+
+export interface AnuncioAula {
+  id: string;
+  professorId: string;
+  disciplinaId: string;
+  disciplinaNome: string;
+  titulo: string;
+  descricao: string | null;
+  valorHora: number;
+  modalidade: string;
   ativo: boolean;
-  diploma: string | null;
-  valorHoraAula: number | null;
+  disponibilidades: DisponibilidadeAnuncio[];
+}
+
+export interface AnuncioAulaPayload {
+  disciplinaId: string;
+  titulo: string;
+  descricao: string | null;
+  valorHora: number;
+  modalidade: string;
+  ativo: boolean;
+}
+
+export interface DisponibilidadePayload {
+  inicio: string;
+  fim: string;
+  observacao: string | null;
 }
