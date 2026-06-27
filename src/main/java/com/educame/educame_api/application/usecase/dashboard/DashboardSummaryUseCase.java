@@ -1,13 +1,8 @@
 package com.educame.educame_api.application.usecase.dashboard;
 
 import com.educame.educame_api.application.dto.dashboard.DashboardSummaryResponse;
-import com.educame.educame_api.domain.enums.PagamentoStatus;
-import com.educame.educame_api.domain.enums.DisponibilidadeStatus;
 import com.educame.educame_api.infrastructure.persistence.jpa.entity.AlunoEntity;
 import com.educame.educame_api.infrastructure.persistence.jpa.entity.AulaEntity;
-import com.educame.educame_api.infrastructure.persistence.jpa.entity.AvaliacaoEntity;
-import com.educame.educame_api.infrastructure.persistence.jpa.entity.DisponibilidadeEntity;
-import com.educame.educame_api.infrastructure.persistence.jpa.entity.PagamentoEntity;
 import com.educame.educame_api.infrastructure.persistence.jpa.entity.ProfessorEntity;
 import com.educame.educame_api.infrastructure.persistence.jpa.repository.AlunoJpaRepository;
 import com.educame.educame_api.infrastructure.persistence.jpa.repository.AulaJpaRepository;
@@ -76,22 +71,13 @@ public class DashboardSummaryUseCase {
 			.map(this::toTeacherAvailability)
 			.toList();
 
-		var approvedPayments = pagamentoRepository.findByStatusValue("aprovado");
-		var approvals = approvedPayments.size();
-		var revenueValue = approvedPayments.stream()
-			.map(PagamentoEntity::getValor)
-			.reduce(BigDecimal.ZERO, BigDecimal::add);
-		var overduePayments = (int) pagamentoRepository.findAll().stream()
-			.filter(payment -> payment.getStatus() == PagamentoStatus.PENDENTE)
-			.filter(payment -> payment.getDataVencimento() != null && payment.getDataVencimento().isBefore(LocalDate.now()))
-			.count();
+		var approvals = (int) pagamentoRepository.countByStatusValue("aprovado");
+		var revenueValue = pagamentoRepository.sumValorByStatusValue("aprovado");
+		var overduePayments = (int) pagamentoRepository.countOverdueByStatusValue("pendente", LocalDate.now());
 
 		var reviewCount = (int) avaliacaoRepository.count();
-		var averageRating = avaliacaoRepository.findAll().stream()
-			.map(AvaliacaoEntity::getNota)
-			.mapToInt(Short::intValue)
-			.average()
-			.orElse(4.8);
+		var averageRating = avaliacaoRepository.averageNota();
+		var averageRatingValue = averageRating != null ? averageRating : 4.8;
 
 		return new DashboardSummaryResponse(
 			dateLabel,
@@ -108,7 +94,7 @@ public class DashboardSummaryUseCase {
 			approvals,
 			overduePayments,
 			formatCurrency(revenueValue.divide(BigDecimal.valueOf(Math.max(approvals, 1)), 2, RoundingMode.HALF_UP)),
-			String.format(Locale.US, "%.1f / 5", averageRating),
+			String.format(Locale.US, "%.1f / 5", averageRatingValue),
 			reviewCount
 		);
 	}
@@ -134,10 +120,7 @@ public class DashboardSummaryUseCase {
 	}
 
 	private DashboardSummaryResponse.TeacherAvailability toTeacherAvailability(ProfessorEntity professor) {
-		var freeSlots = (int) disponibilidadeRepository.findAll().stream()
-			.filter(slot -> slot.getProfessor() != null && slot.getProfessor().getId().equals(professor.getId()))
-			.filter(slot -> slot.getStatus() == DisponibilidadeStatus.DISPONIVEL)
-			.count();
+		var freeSlots = (int) disponibilidadeRepository.countByProfessorIdAndStatusValue(professor.getId(), "disponivel");
 		return new DashboardSummaryResponse.TeacherAvailability(
 			professor.getNome() + " " + professor.getSobrenome(),
 			professor.getBio() != null && !professor.getBio().isBlank() ? professor.getBio() : "Professor",
