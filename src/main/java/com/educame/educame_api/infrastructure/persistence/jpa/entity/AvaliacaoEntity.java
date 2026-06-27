@@ -19,7 +19,7 @@ public class AvaliacaoEntity extends BaseJpaEntity {
 	@JoinColumn(name = "professor_id", nullable = false)
 	private ProfessorEntity professor;
 	@Column(nullable = false)
-	private Integer nota;
+	private Short nota;
 	@Column(columnDefinition = "text")
 	private String comentario;
 
@@ -29,8 +29,8 @@ public class AvaliacaoEntity extends BaseJpaEntity {
 	public void setAluno(AlunoEntity aluno) { this.aluno = aluno; }
 	public ProfessorEntity getProfessor() { return professor; }
 	public void setProfessor(ProfessorEntity professor) { this.professor = professor; }
-	public Integer getNota() { return nota; }
-	public void setNota(Integer nota) { this.nota = nota; }
+	public Short getNota() { return nota; }
+	public void setNota(Short nota) { this.nota = nota; }
 	public String getComentario() { return comentario; }
 	public void setComentario(String comentario) { this.comentario = comentario; }
 }

@@ -1,0 +1,152 @@
+<ng-container *ngIf="loading">
+  <mat-card class="state-card app-surface">
+    <mat-progress-spinner diameter="44" mode="indeterminate"></mat-progress-spinner>
+    <div>
+      <p class="eyebrow">Seu perfil</p>
+      <h3>Carregando dados</h3>
+      <p>Buscando as informacoes gerais da sua conta.</p>
+    </div>
+  </mat-card>
+</ng-container>
+
+<ng-container *ngIf="!loading && errorMessage && !profile">
+  <mat-card class="state-card state-error app-surface">
+    <mat-icon class="material-symbols-rounded" aria-hidden="true">error</mat-icon>
+    <div>
+      <p class="eyebrow">Erro</p>
+      <h3>Nao foi possivel abrir seu perfil</h3>
+      <p>{{ errorMessage }}</p>
+      <button mat-stroked-button color="primary" type="button" (click)="loadProfile()">
+        Tentar novamente
+      </button>
+    </div>
+  </mat-card>
+</ng-container>
+
+<section class="profile-page" *ngIf="!loading && profile">
+  <header class="page-header">
+    <div class="identity">
+      <span class="avatar" aria-hidden="true">{{ initials }}</span>
+      <div>
+        <p class="eyebrow">Seu perfil</p>
+        <h2>{{ fullName }}</h2>
+      </div>
+    </div>
+  </header>
+
+  <div class="profile-grid">
+    <mat-card class="section-card app-surface">
+      <div class="card-head">
+        <div>
+          <p class="eyebrow">Editar</p>
+          <h3>Informacoes gerais</h3>
+        </div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <form class="profile-form" [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+        <div class="field-grid two-columns">
+          <mat-form-field appearance="outline">
+            <mat-label>Nome</mat-label>
+            <mat-icon matPrefix class="material-symbols-rounded" aria-hidden="true">person</mat-icon>
+            <input matInput type="text" formControlName="nome" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Sobrenome</mat-label>
+            <mat-icon matPrefix class="material-symbols-rounded" aria-hidden="true">badge</mat-icon>
+            <input matInput type="text" formControlName="sobrenome" />
+          </mat-form-field>
+        </div>
+
+        <div class="field-grid three-columns">
+          <mat-form-field appearance="outline">
+            <mat-label>Data de nascimento</mat-label>
+            <mat-icon matPrefix class="material-symbols-rounded" aria-hidden="true">calendar_month</mat-icon>
+            <input matInput type="date" formControlName="dataNascimento" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Genero</mat-label>
+            <mat-icon matPrefix class="material-symbols-rounded" aria-hidden="true">diversity_3</mat-icon>
+            <mat-select formControlName="genero">
+              <mat-option *ngFor="let option of genderOptions" [value]="option.value">
+                {{ option.label }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>CPF</mat-label>
+            <mat-icon matPrefix class="material-symbols-rounded" aria-hidden="true">id_card</mat-icon>
+            <input matInput type="text" formControlName="cpf" placeholder="Somente numeros" />
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Foto de perfil</mat-label>
+          <mat-icon matPrefix class="material-symbols-rounded" aria-hidden="true">image</mat-icon>
+          <input matInput type="url" formControlName="fotoPerfil" placeholder="URL da foto" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Diploma</mat-label>
+          <mat-icon matPrefix class="material-symbols-rounded" aria-hidden="true">workspace_premium</mat-icon>
+          <input
+            matInput
+            type="text"
+            formControlName="diploma"
+            placeholder="Ex: Licenciatura em Matematica"
+          />
+        </mat-form-field>
+
+        <div class="feedback success" *ngIf="successMessage">{{ successMessage }}</div>
+        <div class="feedback error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+        <div class="actions">
+          <button mat-stroked-button color="primary" type="button" (click)="loadProfile()" [disabled]="saving">
+            Recarregar
+          </button>
+          <button mat-flat-button color="primary" type="submit" [disabled]="saving">
+            <mat-icon class="material-symbols-rounded" aria-hidden="true">save</mat-icon>
+            <span>{{ saving ? 'Salvando...' : 'Salvar' }}</span>
+          </button>
+        </div>
+      </form>
+    </mat-card>
+
+    <mat-card class="section-card app-surface">
+      <div class="card-head">
+        <div>
+          <p class="eyebrow">Conta</p>
+          <h3>Resumo</h3>
+        </div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <dl class="info-list">
+        <div>
+          <dt>Identificador</dt>
+          <dd>{{ profile.authUserId }}</dd>
+        </div>
+        <div>
+          <dt>Endereco</dt>
+          <dd *ngIf="profile.endereco; else noAddress">
+            {{ profile.endereco.rua || 'Rua nao informada' }},
+            {{ profile.endereco.numero || 'S/N' }} -
+            {{ profile.endereco.cidade || 'Cidade nao informada' }}/{{ profile.endereco.estado || '--' }}
+          </dd>
+          <ng-template #noAddress>
+            <dd>Nao informado</dd>
+          </ng-template>
+        </div>
+        <div>
+          <dt>Diploma</dt>
+          <dd>{{ profile.diploma || 'Nao informado' }}</dd>
+        </div>
+      </dl>
+    </mat-card>
+  </div>
+</section>

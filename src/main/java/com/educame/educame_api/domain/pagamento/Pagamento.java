@@ -1,6 +1,7 @@
 package com.educame.educame_api.domain.pagamento;
 
 import com.educame.educame_api.domain.aluno.Aluno;
+import com.educame.educame_api.domain.aula.Aula;
 import com.educame.educame_api.domain.enums.PagamentoStatus;
 
 import java.math.BigDecimal;
@@ -11,6 +12,7 @@ import java.util.UUID;
 
 public class Pagamento {
 	private UUID id;
+	private Aula aula;
 	private Aluno aluno;
 	private BigDecimal valor;
 	private PagamentoStatus status;
@@ -22,8 +24,9 @@ public class Pagamento {
 	public Pagamento() {
 	}
 
-	public Pagamento(UUID id, Aluno aluno, BigDecimal valor, PagamentoStatus status, LocalDate dataVencimento, OffsetDateTime dataPagamento, String metodoPagamento, String referenciaExterna) {
+	public Pagamento(UUID id, Aula aula, Aluno aluno, BigDecimal valor, PagamentoStatus status, LocalDate dataVencimento, OffsetDateTime dataPagamento, String metodoPagamento, String referenciaExterna) {
 		this.id = id;
+		this.aula = aula;
 		this.aluno = aluno;
 		this.valor = valor;
 		this.status = status;
@@ -35,6 +38,8 @@ public class Pagamento {
 
 	public UUID getId() { return id; }
 	public void setId(UUID id) { this.id = id; }
+	public Aula getAula() { return aula; }
+	public void setAula(Aula aula) { this.aula = aula; }
 	public Aluno getAluno() { return aluno; }
 	public void setAluno(Aluno aluno) { this.aluno = aluno; }
 	public BigDecimal getValor() { return valor; }

@@ -3,6 +3,7 @@ package com.educame.educame_api.application.mapper;
 import com.educame.educame_api.application.dto.aluno.AlunoResponse;
 import com.educame.educame_api.application.dto.professor.ProfessorResponse;
 import com.educame.educame_api.domain.aluno.Aluno;
+import com.educame.educame_api.domain.anuncio.AnuncioAula;
 import com.educame.educame_api.domain.aula.Aula;
 import com.educame.educame_api.domain.avaliacao.Avaliacao;
 import com.educame.educame_api.domain.disciplina.Disciplina;
@@ -12,6 +13,7 @@ import com.educame.educame_api.domain.pagamento.Pagamento;
 import com.educame.educame_api.domain.penalidade.Penalidade;
 import com.educame.educame_api.domain.professor.Professor;
 import com.educame.educame_api.infrastructure.persistence.jpa.entity.AlunoEntity;
+import com.educame.educame_api.infrastructure.persistence.jpa.entity.AnuncioAulaEntity;
 import com.educame.educame_api.infrastructure.persistence.jpa.entity.AulaEntity;
 import com.educame.educame_api.infrastructure.persistence.jpa.entity.AvaliacaoEntity;
 import com.educame.educame_api.infrastructure.persistence.jpa.entity.DisciplinaEntity;
@@ -64,6 +66,12 @@ public interface DomainEntityMapper {
 	@Mapping(target = "createdAt", ignore = true)
 	@Mapping(target = "updatedAt", ignore = true)
 	DisciplinaEntity toEntity(Disciplina domain);
+
+	AnuncioAula toDomain(AnuncioAulaEntity entity);
+
+	@Mapping(target = "createdAt", ignore = true)
+	@Mapping(target = "updatedAt", ignore = true)
+	AnuncioAulaEntity toEntity(AnuncioAula domain);
 
 	Disponibilidade toDomain(DisponibilidadeEntity entity);
 

@@ -3,9 +3,11 @@ import { Injectable, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 
 export interface CadastroPessoaPayload {
+  authUserId: string;
   nome: string;
   sobrenome: string;
   dataNascimento: string;
+  genero: 'FEMININO' | 'MASCULINO' | 'OUTRO';
 }
 
 @Injectable({

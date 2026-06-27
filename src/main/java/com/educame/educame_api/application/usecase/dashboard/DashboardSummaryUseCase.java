@@ -2,6 +2,7 @@ package com.educame.educame_api.application.usecase.dashboard;
 
 import com.educame.educame_api.application.dto.dashboard.DashboardSummaryResponse;
 import com.educame.educame_api.domain.enums.PagamentoStatus;
+import com.educame.educame_api.domain.enums.DisponibilidadeStatus;
 import com.educame.educame_api.infrastructure.persistence.jpa.entity.AlunoEntity;
 import com.educame.educame_api.infrastructure.persistence.jpa.entity.AulaEntity;
 import com.educame.educame_api.infrastructure.persistence.jpa.entity.AvaliacaoEntity;
@@ -75,7 +76,7 @@ public class DashboardSummaryUseCase {
 			.map(this::toTeacherAvailability)
 			.toList();
 
-		var approvedPayments = pagamentoRepository.findByStatus(PagamentoStatus.APROVADO);
+		var approvedPayments = pagamentoRepository.findByStatusValue("aprovado");
 		var approvals = approvedPayments.size();
 		var revenueValue = approvedPayments.stream()
 			.map(PagamentoEntity::getValor)
@@ -88,7 +89,7 @@ public class DashboardSummaryUseCase {
 		var reviewCount = (int) avaliacaoRepository.count();
 		var averageRating = avaliacaoRepository.findAll().stream()
 			.map(AvaliacaoEntity::getNota)
-			.mapToInt(Integer::intValue)
+			.mapToInt(Short::intValue)
 			.average()
 			.orElse(4.8);
 
@@ -135,7 +136,7 @@ public class DashboardSummaryUseCase {
 	private DashboardSummaryResponse.TeacherAvailability toTeacherAvailability(ProfessorEntity professor) {
 		var freeSlots = (int) disponibilidadeRepository.findAll().stream()
 			.filter(slot -> slot.getProfessor() != null && slot.getProfessor().getId().equals(professor.getId()))
-			.filter(slot -> slot.getStatus() != null && slot.getStatus().name().equals("DISPONIVEL"))
+			.filter(slot -> slot.getStatus() == DisponibilidadeStatus.DISPONIVEL)
 			.count();
 		return new DashboardSummaryResponse.TeacherAvailability(
 			professor.getNome() + " " + professor.getSobrenome(),

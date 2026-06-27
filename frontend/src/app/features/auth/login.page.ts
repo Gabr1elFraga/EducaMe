@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, inject } from '@angular/core';
 import {
   FormBuilder,
@@ -10,9 +11,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { AuthService } from '../../core/services/auth.service';
+import { PessoaService } from '../../core/services/pessoa.service';
 
 type AuthMode = 'signup' | 'login';
+type CadastroGenero = 'FEMININO' | 'MASCULINO' | 'OUTRO';
 
 @Component({
   selector: 'app-login-page',
@@ -24,6 +28,7 @@ type AuthMode = 'signup' | 'login';
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
+    MatSelectModule,
     RouterLink,
   ],
   templateUrl: './login.page.html',
@@ -43,9 +48,16 @@ export class LoginPageComponent implements OnInit {
     nome: ['', [Validators.required, Validators.maxLength(120)]],
     sobrenome: ['', [Validators.required, Validators.maxLength(120)]],
     dataNascimento: ['', [Validators.required]],
+    genero: [null as CadastroGenero | null, [Validators.required]],
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]],
   });
+
+  readonly genderOptions: Array<{ value: CadastroGenero; label: string }> = [
+    { value: 'FEMININO', label: 'Feminino' },
+    { value: 'MASCULINO', label: 'Masculino' },
+    { value: 'OUTRO', label: 'Outro' },
+  ];
 
   loading = false;
   registering = false;
@@ -56,6 +68,7 @@ export class LoginPageComponent implements OnInit {
 
   constructor(
     readonly authService: AuthService,
+    private readonly pessoaService: PessoaService,
     private readonly router: Router,
     private readonly route: ActivatedRoute,
   ) {}
@@ -112,6 +125,7 @@ export class LoginPageComponent implements OnInit {
         throw new Error('Falha ao autenticar a conta.');
       }
 
+      await this.ensurePessoaFromCurrentUser();
       await this.router.navigateByUrl(this.redirectUrl, { replaceUrl: true });
     } catch (error) {
       console.error('Login failed', error);
@@ -139,16 +153,24 @@ export class LoginPageComponent implements OnInit {
       const nome = form.controls.nome.value.trim();
       const sobrenome = form.controls.sobrenome.value.trim();
       const dataNascimento = form.controls.dataNascimento.value;
+      const genero = form.controls.genero.value;
       const email = form.controls.email.value.trim();
       const password = form.controls.password.value;
+
+      if (!genero) {
+        form.controls.genero.markAsTouched();
+        return;
+      }
 
       const result = await this.authService.signUp(email, password, {
         nome,
         sobrenome,
         data_nascimento: dataNascimento,
+        genero,
       });
 
       if (result.session) {
+        await this.registrarPessoa(nome, sobrenome, dataNascimento, genero);
         await this.router.navigateByUrl(this.redirectUrl, { replaceUrl: true });
         return;
       }
@@ -178,7 +200,74 @@ export class LoginPageComponent implements OnInit {
       : 'Acesse sua conta com e-mail e senha.';
   }
 
+  private async ensurePessoaFromCurrentUser(): Promise<void> {
+    const metadata = this.authService.currentUser?.user_metadata as Record<string, unknown> | undefined;
+    const nome = this.resolveMetadataString(metadata, 'nome', 'first_name');
+    const sobrenome = this.resolveMetadataString(metadata, 'sobrenome', 'last_name');
+    const dataNascimento = this.resolveMetadataString(metadata, 'data_nascimento', 'dataNascimento');
+    const genero = this.resolveMetadataGenero(metadata);
+
+    if (!nome || !sobrenome || !dataNascimento || !genero) {
+      return;
+    }
+
+    await this.registrarPessoa(nome, sobrenome, dataNascimento, genero);
+  }
+
+  private async registrarPessoa(
+    nome: string,
+    sobrenome: string,
+    dataNascimento: string,
+    genero: CadastroGenero,
+  ): Promise<void> {
+    const authUserId = this.authService.currentUser?.id;
+
+    if (!authUserId) {
+      throw new Error('O usuario autenticado e obrigatorio para criar o perfil.');
+    }
+
+    await this.pessoaService.registrarPessoa({
+      authUserId,
+      nome,
+      sobrenome,
+      dataNascimento,
+      genero,
+    });
+  }
+
+  private resolveMetadataString(
+    metadata: Record<string, unknown> | undefined,
+    ...keys: string[]
+  ): string | null {
+    for (const key of keys) {
+      const value = metadata?.[key];
+
+      if (typeof value === 'string' && value.trim().length > 0) {
+        return value.trim();
+      }
+    }
+
+    return null;
+  }
+
+  private resolveMetadataGenero(metadata: Record<string, unknown> | undefined): CadastroGenero | null {
+    const value = this.resolveMetadataString(metadata, 'genero', 'gender');
+    return value === 'FEMININO' || value === 'MASCULINO' || value === 'OUTRO' ? value : null;
+  }
+
   private normalizeError(error: unknown): string {
+    if (error instanceof HttpErrorResponse) {
+      if (typeof error.error?.message === 'string') {
+        return error.error.message;
+      }
+
+      if (typeof error.error?.error === 'string') {
+        return error.error.error;
+      }
+
+      return error.message || 'Nao foi possivel concluir a autenticacao.';
+    }
+
     if (!(error instanceof Error)) {
       return 'Nao foi possivel concluir a autenticacao.';
     }

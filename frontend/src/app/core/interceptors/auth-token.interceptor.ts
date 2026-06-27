@@ -7,7 +7,10 @@ export const authTokenInterceptor: HttpInterceptorFn = (req, next) => {
   const token = authService.accessToken;
   const currentUser = authService.currentUser;
   const authUserId = currentUser?.id;
-  const isApiRequest = req.url.startsWith('/api');
+  const isApiRequest = req.url.startsWith('/api') || req.url.startsWith('/v1') || req.url.startsWith('/dashboard');
+  const isAuthBootstrapRequest =
+    req.url.startsWith('/api/v1/autenticacao/pessoas') ||
+    req.url.startsWith('/v1/autenticacao/pessoas');
 
   if (!isApiRequest) {
     return next(req);
@@ -15,7 +18,7 @@ export const authTokenInterceptor: HttpInterceptorFn = (req, next) => {
 
   const headers: Record<string, string> = {};
 
-  if (token) {
+  if (token && !isAuthBootstrapRequest) {
     headers['Authorization'] = `Bearer ${token}`;
   }
 

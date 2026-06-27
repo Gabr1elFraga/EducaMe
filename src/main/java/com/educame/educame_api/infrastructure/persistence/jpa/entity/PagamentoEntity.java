@@ -1,10 +1,10 @@
 package com.educame.educame_api.infrastructure.persistence.jpa.entity;
 
 import com.educame.educame_api.domain.enums.PagamentoStatus;
+import com.educame.educame_api.infrastructure.persistence.jpa.converter.PagamentoStatusConverter;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -24,7 +24,7 @@ public class PagamentoEntity extends BaseJpaEntity {
 	private AlunoEntity aluno;
 	@Column(nullable = false, precision = 12, scale = 2)
 	private BigDecimal valor;
-	@Enumerated(EnumType.STRING)
+	@Convert(converter = PagamentoStatusConverter.class)
 	@Column(nullable = false)
 	private PagamentoStatus status;
 	@Column(name = "data_vencimento")

@@ -6,13 +6,12 @@ import com.educame.educame_api.domain.enums.GeneroTipo;
 import com.educame.educame_api.domain.endereco.Endereco;
 import com.educame.educame_api.domain.professor.Professor;
 import com.educame.educame_api.infrastructure.persistence.jdbc.PessoaJdbcRepository;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -20,6 +19,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
+@Profile("supabase")
 @ConditionalOnExpression("T(org.springframework.util.StringUtils).hasText('${SUPABASE_DB_URL:}')")
 @Primary
 public class SupabaseProfileCadastroRepository implements ProfileCadastroRepository {
@@ -27,17 +27,11 @@ public class SupabaseProfileCadastroRepository implements ProfileCadastroReposit
 	private final PessoaJdbcRepository pessoaJdbcRepository;
 
 	public SupabaseProfileCadastroRepository(
-		@Value("${SUPABASE_DB_URL}") String url,
-		@Value("${SUPABASE_DB_USER}") String user,
-		@Value("${SUPABASE_DB_PASSWORD}") String password
+		NamedParameterJdbcTemplate jdbcTemplate,
+		PessoaJdbcRepository pessoaJdbcRepository
 	) {
-		var dataSource = new DriverManagerDataSource();
-		dataSource.setDriverClassName("org.postgresql.Driver");
-		dataSource.setUrl(url);
-		dataSource.setUsername(user);
-		dataSource.setPassword(password);
-		this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-		this.pessoaJdbcRepository = new PessoaJdbcRepository(this.jdbcTemplate);
+		this.jdbcTemplate = jdbcTemplate;
+		this.pessoaJdbcRepository = pessoaJdbcRepository;
 	}
 
 	@Override
@@ -177,7 +171,9 @@ public class SupabaseProfileCadastroRepository implements ProfileCadastroReposit
 			professor.getNome(),
 			professor.getSobrenome(),
 			professor.getDataNascimento(),
-			GeneroTipo.NAO_INFORMADO,
+			professor.getPessoa() != null && professor.getPessoa().getGenero() != null
+				? professor.getPessoa().getGenero()
+				: GeneroTipo.NAO_INFORMADO,
 			professor.getEndereco() != null ? professor.getEndereco().getId() : null,
 			professor.getCpf(),
 			professor.getPessoa() != null ? professor.getPessoa().getFotoPerfil() : null

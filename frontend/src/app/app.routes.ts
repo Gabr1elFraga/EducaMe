@@ -21,11 +21,22 @@ export const routes: Routes = [
         component: DashboardPageComponent,
       },
       {
-        path: 'perfil-professor',
+        path: 'perfil',
+        loadComponent: () =>
+          import('./features/user-profile/user-profile.page').then(
+            (module) => module.UserProfilePageComponent,
+          ),
+      },
+      {
+        path: 'meus-anuncios',
         loadComponent: () =>
           import('./features/professor-profile/professor-profile.page').then(
             (module) => module.ProfessorProfilePageComponent,
           ),
+      },
+      {
+        path: 'perfil-professor',
+        redirectTo: 'meus-anuncios',
       },
     ],
   },
