@@ -1,0 +1,182 @@
+:host {
+  display: block;
+}
+
+.profile-page {
+  display: grid;
+  gap: 22px;
+}
+
+.identity {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.avatar {
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--primary-strong), #14b8a6);
+  font: 800 1.25rem/1 'Plus Jakarta Sans', sans-serif;
+}
+
+.identity h2,
+.section-card h3,
+.state-card h3 {
+  margin: 4px 0 0;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+.identity h2 {
+  font-size: 2rem;
+  line-height: 1.1;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+  gap: 22px;
+}
+
+.section-card,
+.state-card {
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: var(--shadow);
+}
+
+.section-card {
+  padding: 22px;
+}
+
+.card-head,
+.state-card,
+.actions {
+  display: flex;
+  gap: 16px;
+}
+
+.card-head {
+  align-items: center;
+  justify-content: space-between;
+}
+
+.profile-form {
+  display: grid;
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.field-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.two-columns {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.three-columns {
+  grid-template-columns: minmax(180px, 0.8fr) minmax(180px, 0.8fr) minmax(180px, 0.7fr);
+}
+
+.profile-form mat-form-field {
+  width: 100%;
+}
+
+.actions {
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.actions button {
+  min-height: 44px;
+}
+
+.info-list {
+  display: grid;
+  gap: 14px;
+  margin: 18px 0 0;
+}
+
+.info-list div {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.info-list dt,
+.state-card p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.info-list dt {
+  font-size: 0.82rem;
+}
+
+.info-list dd {
+  margin: 5px 0 0;
+  overflow-wrap: anywhere;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.state-card {
+  align-items: center;
+  padding: 24px;
+}
+
+.state-card mat-progress-spinner,
+.state-card mat-icon {
+  color: var(--primary-strong);
+}
+
+.state-error {
+  border-color: rgba(220, 38, 38, 0.18);
+  background: rgba(254, 242, 242, 0.98);
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 0.74rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 1180px) {
+  .profile-grid,
+  .three-columns {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .identity,
+  .card-head,
+  .state-card {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .section-card,
+  .state-card {
+    padding: 18px;
+  }
+
+  .actions,
+  .actions button,
+  .two-columns {
+    width: 100%;
+    grid-template-columns: 1fr;
+  }
+}

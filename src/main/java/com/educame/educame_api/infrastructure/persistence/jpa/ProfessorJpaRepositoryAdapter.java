@@ -55,13 +55,16 @@ public class ProfessorJpaRepositoryAdapter implements ProfessorRepository {
 			: new com.educame.educame_api.infrastructure.persistence.jpa.entity.ProfessorEntity();
 
 		var existingPessoaId = entity.getPessoa() != null ? entity.getPessoa().getId() : null;
+		var genero = professor.getPessoa() != null && professor.getPessoa().getGenero() != null
+			? professor.getPessoa().getGenero()
+			: GeneroTipo.NAO_INFORMADO;
 		var pessoaId = pessoaJdbcRepository.upsertPessoa(
 			existingPessoaId,
 			professor.getAuthUserId(),
 			professor.getNome(),
 			professor.getSobrenome(),
 			professor.getDataNascimento(),
-			GeneroTipo.NAO_INFORMADO,
+			genero,
 			professor.getEndereco() != null ? professor.getEndereco().getId() : null,
 			professor.getCpf(),
 			professor.getPessoa() != null ? professor.getPessoa().getFotoPerfil() : null
@@ -75,7 +78,7 @@ public class ProfessorJpaRepositoryAdapter implements ProfessorRepository {
 		entity.setNome(professor.getNome());
 		entity.setSobrenome(professor.getSobrenome());
 		entity.setDataNascimento(professor.getDataNascimento());
-		entity.setGenero(GeneroTipo.NAO_INFORMADO);
+		entity.setGenero(genero);
 		entity.setEndereco(
 			professor.getEndereco() != null
 				? domainEntityMapper.toEntity(professor.getEndereco())

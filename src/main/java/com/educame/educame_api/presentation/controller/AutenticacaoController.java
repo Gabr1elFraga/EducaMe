@@ -13,6 +13,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -49,10 +50,14 @@ public class AutenticacaoController {
 	@PostMapping("/pessoas")
 	public ResponseEntity<Void> cadastrarPessoa(
 		@Valid @RequestBody CadastroPessoaRequest request,
-		@AuthenticationPrincipal Jwt jwt
+		@AuthenticationPrincipal Jwt jwt,
+		@RequestHeader(value = "X-Auth-User-Id", required = false) UUID authUserId
 	) {
-		ensureJwtPresent(jwt);
-		autenticacaoUseCase.cadastrarPessoa(request, UUID.fromString(jwt.getSubject()));
+		ensureJwtMatchesRequest(jwt, request.authUserId());
+		var resolvedAuthUserId = jwt != null && jwt.getSubject() != null
+			? UUID.fromString(jwt.getSubject())
+			: request.authUserId() != null ? request.authUserId() : authUserId;
+		autenticacaoUseCase.cadastrarPessoa(request, resolvedAuthUserId);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
@@ -70,5 +75,17 @@ public class AutenticacaoController {
 		if (jwt == null || jwt.getSubject() == null) {
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "O usuario autenticado e obrigatorio.");
 		}
+	}
+
+	private UUID resolveAuthUserId(Jwt jwt, UUID authUserId) {
+		if (jwt != null && jwt.getSubject() != null) {
+			return UUID.fromString(jwt.getSubject());
+		}
+
+		if (authUserId == null) {
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "O usuario autenticado e obrigatorio.");
+		}
+
+		return authUserId;
 	}
 }

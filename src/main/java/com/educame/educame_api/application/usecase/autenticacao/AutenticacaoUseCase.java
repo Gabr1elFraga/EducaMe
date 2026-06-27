@@ -70,19 +70,21 @@ public class AutenticacaoUseCase {
 		pessoa.setNome(request.nome().trim());
 		pessoa.setSobrenome(request.sobrenome().trim());
 		pessoa.setDataNascimento(request.dataNascimento());
-		pessoa.setGenero(GeneroTipo.NAO_INFORMADO);
+		pessoa.setGenero(request.genero());
 
-		var aluno = new Aluno();
+		var aluno = profileCadastroRepository.findAlunoByAuthUserId(resolvedAuthUserId).orElseGet(Aluno::new);
 		aluno.setPessoa(pessoa);
 		profileCadastroRepository.saveAluno(aluno);
 
-		var professor = new Professor();
+		var professor = profileCadastroRepository.findProfessorByAuthUserId(resolvedAuthUserId).orElseGet(Professor::new);
 		professor.setPessoa(pessoa);
-		professor.setBio(null);
+		if (professor.getBio() == null) {
+			professor.setBio(null);
+		}
 		professor.setAtivo(true);
-		professor.setDiploma(null);
-		professor.setStatusVerificacao("PENDENTE");
-		professor.setValorHoraAula(null);
+		if (professor.getStatusVerificacao() == null) {
+			professor.setStatusVerificacao("PENDENTE");
+		}
 		profileCadastroRepository.saveProfessor(professor);
 	}
 
