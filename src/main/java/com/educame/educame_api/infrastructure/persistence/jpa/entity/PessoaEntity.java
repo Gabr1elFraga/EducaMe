@@ -1,10 +1,10 @@
 package com.educame.educame_api.infrastructure.persistence.jpa.entity;
 
 import com.educame.educame_api.domain.enums.GeneroTipo;
+import com.educame.educame_api.infrastructure.persistence.jpa.converter.GeneroTipoConverter;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -23,7 +23,7 @@ public class PessoaEntity extends BaseJpaEntity {
 	private String sobrenome;
 	@Column(name = "data_nascimento", nullable = false)
 	private LocalDate dataNascimento;
-	@Enumerated(EnumType.STRING)
+	@Convert(converter = GeneroTipoConverter.class)
 	@Column(nullable = false)
 	private GeneroTipo genero = GeneroTipo.NAO_INFORMADO;
 	@ManyToOne
